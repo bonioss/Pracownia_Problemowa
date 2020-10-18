@@ -54,7 +54,7 @@ const App = () => {
               <SidebarContent>
                 <DrawerLogo />
 
-                <DrawerHeader name={user.name} email={user.email} />
+                <DrawerHeader name={`${user.firstName} ${user.lastName}`} email={user.email} />
 
                 <Divider />
 
@@ -74,9 +74,9 @@ const App = () => {
             </DrawerSidebar>
 
             <Switch>
-              <Route component={TestPage} />
               <Route path={['/logowanie', '/rejestracja']}><Redirect to="/" /></Route>
               <Route path="/wyloguj" component={LogoutPage} />
+              <Route component={TestPage} />
             </Switch>
           </Root>
         </ThemeProvider>
@@ -85,7 +85,6 @@ const App = () => {
         {!user && (
         <ThemeProvider theme={darkTheme}>
           <Switch>
-            <Route path="/rejestracja" render={() => 'Rejestracja'} />
             <Route path="/logowanie"><LoginPage /></Route>
             <Route><Redirect to="/logowanie" /></Route>
           </Switch>

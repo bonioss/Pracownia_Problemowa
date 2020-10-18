@@ -18,6 +18,8 @@ CATERING_MAIL = mail z którego chcemy wysyłać
 CATERING_MAIL_PASSWORD = hasło
 
 3. Startowanie jednocześnie backendu i frontendu - npm run dev z poziomu katalogu server
+
+DOKUMENTACJA API DOSTĘPNA PO URUCHOMIENIU SERWERA POD ADRESEM: http://localhost:5000/api-docs
  
 WYMAGANIA APKi: 
 1. Logowanie i rejestracja:

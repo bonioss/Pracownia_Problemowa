@@ -4,7 +4,8 @@ const dotenv = require('dotenv');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
-
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
 // Load env vars
 dotenv.config({ path: './config/config.env' });
 
@@ -12,9 +13,26 @@ dotenv.config({ path: './config/config.env' });
 connectDB();
 
 // Route files
-const testRoute = require('./routes/test.route');
+const authRoutes = require('./routes/auth.routes');
+const testRoute = require('./routes/test.routes');
 
 const app = express();
+
+// Body parser
+app.use(express.json());
+
+//Cookie parser
+app.use(cookieParser());
+// Set up CORS
+app.use(
+    cors({
+      origin: [
+        `${process.env.FRONT_URL}`,
+        'http://localhost:3000',
+      ],
+      credentials: true
+    })
+  );
 
 // Logging middleware only in development mode
 if (process.env.NODE_ENV === 'development') {
@@ -22,10 +40,12 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Mount routes
+app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/test', testRoute);
 
 // Set error handler
 app.use(errorHandler);
+
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, console.log(

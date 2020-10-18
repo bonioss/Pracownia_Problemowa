@@ -17,6 +17,7 @@ import { TestPage } from 'pages/TestPage';
 import { darkTheme, lightTheme } from 'theme';
 import LogoutIcon from '@material-ui/icons/ExitToApp';
 import TestIcon from '@material-ui/icons/ChildCare';
+import { LogoutPage } from 'pages/LogoutPage';
 import { DrawerHeader } from './DrawerHeader';
 import { DrawerItem } from './DrawerItem';
 
@@ -74,6 +75,8 @@ const App = () => {
 
             <Switch>
               <Route component={TestPage} />
+              <Route path={['/logowanie', '/rejestracja']}><Redirect to="/" /></Route>
+              <Route path="/wyloguj" component={LogoutPage} />
             </Switch>
           </Root>
         </ThemeProvider>

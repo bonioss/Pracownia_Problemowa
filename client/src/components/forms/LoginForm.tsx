@@ -3,10 +3,8 @@ import {
 } from '@material-ui/core';
 import React, { FC } from 'react';
 import { FormProps, Stylable } from 'utils/types';
-import { useForm } from 'react-hook-form';
 import { LoginParams } from 'api/auth';
 import * as z from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import Alert from '@material-ui/lab/Alert';
 
 // #region styles
@@ -31,7 +29,7 @@ const StyledTextField = withStyles({
 })(TextField);
 // #endregion
 
-const schema = z.object({
+export const schema = z.object({
   email: z.string()
     .min(1, { message: 'Email jest wymagany' })
     .email({ message: 'To nie jest poprawny email' }),
@@ -40,13 +38,11 @@ const schema = z.object({
 });
 
 export const LoginForm: FC<FormProps<LoginParams> & Stylable> = ({
-  onSubmit, error, ...props
+  onSubmit, error, form, ...props
 }) => {
   const {
-    register, handleSubmit, errors, formState,
-  } = useForm<LoginParams>({
-    resolver: zodResolver(schema),
-  });
+    handleSubmit, register, errors, formState,
+  } = form;
 
   return (
     <Form {...props} onSubmit={handleSubmit(onSubmit)}>
@@ -55,6 +51,7 @@ export const LoginForm: FC<FormProps<LoginParams> & Stylable> = ({
       </Collapse>
 
       <StyledTextField
+        id="login-email"
         name="email"
         label="Adres e-mail"
         type="email"
@@ -67,6 +64,7 @@ export const LoginForm: FC<FormProps<LoginParams> & Stylable> = ({
       />
 
       <StyledTextField
+        id="login-password"
         name="password"
         label="Hasło"
         type="password"

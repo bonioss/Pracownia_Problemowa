@@ -6,6 +6,10 @@ const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+//for documentation
+const swaggerUi = require('swagger-ui-express'),
+swaggerDocument = require('./swagger.json');
+
 // Load env vars
 dotenv.config({ path: './config/config.env' });
 
@@ -46,6 +50,8 @@ app.use('/api/v1/test', testRoute);
 // Set error handler
 app.use(errorHandler);
 
+//Set swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, console.log(

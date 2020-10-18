@@ -104,6 +104,7 @@ res.status(200).json({
 // @route   POST /api/v1/auth/register
 // @access  Public
 exports.register=asyncHandler(async(req, res, next) => {
+  
   const {email, password, firstName, lastName, agencyCode} = req.body;
   const agency = await Agency.findOne({agencyCode});
   //check if agency exist

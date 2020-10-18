@@ -1,4 +1,4 @@
-import { api } from 'api';
+import { api, ApiResponse } from 'api';
 import { useMutation } from 'react-query';
 
 export interface LoginParams {
@@ -6,12 +6,15 @@ export interface LoginParams {
   password: string;
 }
 
-// FIXME: Change to real user schema
 export interface User {
+  agencyCode: string;
   email: string;
-  name: string;
+  firstName: string;
+  lastName: string;
+  role: 'admin' | 'parent';
+  wallet: number;
 }
 
 export const useLogin = () => useMutation(
-  (data: LoginParams) => api.post<User>('/auth/login', data).then(res => res.data),
+  (data: LoginParams) => api.post<ApiResponse<User>>('/auth/login', data).then(res => res.data),
 );

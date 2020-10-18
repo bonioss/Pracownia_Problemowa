@@ -6,6 +6,7 @@ import {
   Route, Switch, BrowserRouter, Redirect,
 } from 'react-router-dom';
 import { useAuth } from 'utils/authState';
+import { LogoutPage } from 'pages/LogoutPage';
 
 const Container = styled('div')(({ theme }) => ({
   background: theme.palette.background.default,
@@ -28,7 +29,9 @@ const App = () => {
 
           {user && (
             <Switch>
-              <Route render={() => `Hi ${user.name}!`} />
+              <Route path={['/logowanie', '/rejestracja']}><Redirect to="/" /></Route>
+              <Route path="/wyloguj" component={LogoutPage} />
+              <Route render={() => `Hi ${user.firstName}!`} />
             </Switch>
           )}
         </BrowserRouter>

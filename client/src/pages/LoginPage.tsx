@@ -53,9 +53,9 @@ export const LoginPage = () => {
 
   const handleLogin = async (data: LoginParams) => {
     await login(data, {
-      onSuccess: user => {
+      onSuccess: res => {
         form.reset();
-        // setAuth({ user });
+        setAuth({ user: res.data });
       },
       onError: err => {
         setError(errorHandler(err, message => {

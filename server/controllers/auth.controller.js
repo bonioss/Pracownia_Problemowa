@@ -38,10 +38,13 @@ exports.login = asyncHandler(async (req, res, next) => {
 
     // Create token
     let token = {}
+    let resData = {}
     if (user) {
       token = getSignedJwtToken(user._id);
+      resData = await User.findById(user._id).select('-_id -password -__v');
     } else if (agency) {
       token = getSignedJwtToken(agency._id);
+      resData = await Agency.findById(agency._id).select('-_id -password -__v');
     }
    
     //Create cookie with token
@@ -50,9 +53,12 @@ exports.login = asyncHandler(async (req, res, next) => {
       secure: false, // set to true if your using https
       httpOnly: true,
     });
+    
+    // const resData = await User.findById(user._id).select('-_id -password -__v');
     //Send repsonse
     res.status(200).json({
       success:true,
+      data:resData
     })
   });
 
@@ -112,7 +118,7 @@ exports.register=asyncHandler(async(req, res, next) => {
     return next(new ErrorResponse('Invalid agency code', 401));
   }
   //create user
-  const user = User.create({
+  const user = await User.create({
     email,
     password,
     firstName,
@@ -120,16 +126,19 @@ exports.register=asyncHandler(async(req, res, next) => {
     agencyCode
   });
 
+  
   const token = getSignedJwtToken(user._id);
+  
   //Create cookie with token
   res.cookie('token', token, {
     expires: new Date(Date.now() + process.env.JWT_EXPIRE),
     secure: false, // set to true if your using https
     httpOnly: true,
   });
+  const resData = await User.findById(user._id).select('-_id -password -__v');
   //Send repsonse
   res.status(200).json({
     success:true,
-    data: user
+    data: resData
   });
 })

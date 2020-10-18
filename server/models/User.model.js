@@ -36,6 +36,10 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Agency code is required.'],
         maxlength: [36, 'Agency code cannot be longer than 100 letters.']
+    },
+    wallet: {
+        type: Number,
+        default: 0
     }
 });
 

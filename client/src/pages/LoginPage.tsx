@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom';
 import { ReactComponent as PracowniaPosilkow } from 'assets/pracownia_posilkow.svg';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { errorHandler } from 'utils/errorHandler';
+import { useSetAuth } from 'utils/authState';
 
 // #region styles
 const Container = styled('div')({
@@ -39,6 +41,7 @@ const AppLogo = styled(PracowniaPosilkow)({
 export const LoginPage = () => {
   const [login] = useLogin();
   const [formError, setError] = useState('');
+  const setAuth = useSetAuth();
 
   const form = useForm<LoginParams>({
     resolver: zodResolver(schema),
@@ -49,15 +52,20 @@ export const LoginPage = () => {
   });
 
   const handleLogin = async (data: LoginParams) => {
-    console.log(data);
-
     await login(data, {
       onSuccess: user => {
-        console.log(user);
         form.reset();
+        // setAuth({ user });
       },
       onError: err => {
-        setError((err as Error).message);
+        setError(errorHandler(err, message => {
+          switch (message) {
+            case 'Invalid credentials.':
+              return 'Nieprawidłowy email lub hasło';
+            default:
+              return 'Wystąpił nieznany błąd, spróbuj ponownie.';
+          }
+        }));
       },
     });
   };

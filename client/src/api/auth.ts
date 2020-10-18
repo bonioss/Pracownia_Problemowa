@@ -13,5 +13,5 @@ export interface User {
 }
 
 export const useLogin = () => useMutation(
-  (data: LoginParams) => api.post<User>('login', data).then(res => res.data),
+  (data: LoginParams) => api.post<User>('/auth/login', data).then(res => res.data),
 );

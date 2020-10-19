@@ -1,0 +1,19 @@
+{
+  "name": "projekt_pp",
+  "version": "1.0.0",
+  "description": "API platformy do zarządzania zamówieniami posiłków",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bonioss/Pracownia_Problemowa.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bonioss/Pracownia_Problemowa/issues"
+  },
+  "homepage": "https://github.com/bonioss/Pracownia_Problemowa#readme"
+}

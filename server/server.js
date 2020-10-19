@@ -19,7 +19,8 @@ connectDB();
 
 // Route files
 const authRoutes = require('./routes/auth.routes');
-const testRoute = require('./routes/test.routes');
+const testRoutes = require('./routes/test.routes');
+const kidRoutes  = require('./routes/kid.routes');
 
 const app = express();
 
@@ -46,7 +47,8 @@ if (process.env.NODE_ENV === 'development') {
 
 // Mount routes
 app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/test', testRoute);
+app.use('/api/v1/test', testRoutes);
+app.use('/api/v1/kid', kidRoutes);
 
 // Set error handler
 app.use(errorHandler);

@@ -104,7 +104,29 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: boolean                        
+                    type: boolean 
+  /kid/agencyAddKid:
+    post:
+      summary: Add kid by agency, private route for Agency
+      tags: 
+      - Kid
+      requestBody:
+        required: true
+        description: A JSON object that contains crudentials.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgencyAddKid'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean                          
 components:
   schemas:
     Login:
@@ -189,3 +211,12 @@ components:
           - week
           - month
           - semestr                              
+    AgencyAddKid: 
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        agencyCode:
+          type: string

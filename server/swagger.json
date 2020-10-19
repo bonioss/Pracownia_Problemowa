@@ -42,7 +42,31 @@
                             "$ref": "#/definitions/Login"
                           }
                     }
-                ]
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    
+                    "200": {
+                        "description": "Success",
+                        "schema" : {
+                            "$ref": "#/definitions/LoginInfo"
+                        }
+                    },
+                    "400":{
+                        "description": "Provide email and password",
+                        "schema" : {
+                            "$ref": "#/definitions/InvalidCredentials"
+                        }
+                    },
+                    "401":{
+                        "description": "Invalid crudentials",
+                        "schema" : {
+                            "$ref": "#/definitions/InvalidCredentials"
+                        }
+                    }
+                }
             }
         },
         "/auth/register": {
@@ -60,7 +84,24 @@
                             "$ref": "#/definitions/Register"
                           }
                     }
-                ]
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema" : {
+                            "$ref": "#/definitions/RegisterInfo"
+                        }
+                    },
+                    "401":{
+                        "description": "Invalid agency code",
+                        "schema" : {
+                            "$ref": "#/definitions/InvalidCredentials"
+                        }
+                    }
+                }
             }
         },
         "/auth/addAgency": {
@@ -78,7 +119,16 @@
                             "$ref": "#/definitions/AddAgency"
                           }
                     }
-                ]
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Only res -> success: true"
+                    }
+
+                }
             }
         }
     },
@@ -141,6 +191,75 @@
                     "enum": ["day", "week", "month", "semestr"]
                 }
             }
+        },
+        "User": {
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "firstName": {
+                    "type": "string"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "agencyCode": {
+                    "type":"string"
+                }
+            }
+        },
+        "Agency": {
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "agencyCode": {
+                    "type":"string"
+                },
+                "ordersPeriod": {
+                    "type": "String",
+                    "enum": ["day", "week", "month", "semestr"]
+                }
+            }
+        },
+        "LoginInfo": {
+            "properties": {
+                "success": {
+                    "type": "boolean"
+                },
+                "data(IfUser)": {
+                    "$ref": "#/definitions/User"
+                },
+                "data(IfAgency)": {
+                    "$ref": "#/definitions/Agency"
+                }
+                
+            }
+        },
+        "RegisterInfo": {
+            "properties": {
+                "success": {
+                    "type": "boolean"
+                },
+                "data": {
+                    "$ref": "#/definitions/Agency"
+                }                
+            }
+        },
+        "InvalidCredentials": {
+            "properties": {
+                "success": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "error": {
+                    "type": "string"
+                }
+            }
         }
+        
     }
 }

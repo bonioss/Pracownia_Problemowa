@@ -8,7 +8,8 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 //for documentation
 const swaggerUi = require('swagger-ui-express'),
-swaggerDocument = require('./swagger.json');
+YAML = require('yamljs');
+swaggerDocument = YAML.load('./swagger.yaml');
 
 // Load env vars
 dotenv.config({ path: './config/config.env' });

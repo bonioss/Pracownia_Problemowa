@@ -1,0 +1,191 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Food Catering API
+servers:
+  - url: http://localhost:5000/api/v1/     
+paths:
+  /auth/login:
+    post:
+      summary: Log into system
+      tags: 
+      - Auth
+      requestBody:
+        required: true
+        description: A JSON object that contains the user email and password.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/LoginUser'
+                  - $ref: '#/components/schemas/LoginAgency'
+                decriminator:
+                  propertyName: role  
+        '400':
+          description: Provide email and password
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string  
+        '401':
+          description: Invalid crudentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string                     
+  /auth/register:
+    post:
+      summary: Registration for parents
+      tags: 
+      - Auth
+      requestBody:
+        required: true
+        description: A JSON object that contains crudentials.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Register'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginUser'     
+        '401':
+          description: Invalid agency code
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string  
+  /auth/addAgency:
+    post:
+      summary: Add agency, private route for Admin
+      tags: 
+      - Auth
+      requestBody:
+        required: true
+        description: A JSON object that contains crudentials.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddAgency'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean                        
+components:
+  schemas:
+    Login:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    LoginUser:
+      type: object
+      properties:
+        success: 
+          type: boolean
+        data:
+          type: object
+          properties:
+            role: 
+              type: string
+              enum:
+              - admin
+              - parent
+            wallet:
+              type: number           
+            email:
+              type: string     
+            firstName:
+              type: string
+            lastName:
+              type: string              
+            agencyCode:
+              type: string  
+    LoginAgency:
+      type: object
+      properties:
+        success: 
+          type: boolean
+        data:
+          type: object
+          properties:
+            role: 
+              type: string
+              enum:
+              - agency            
+            email:
+              type: string
+            name:
+              type: string
+            agencyCode:
+              type: string
+            ordersPeriod:
+              type: string
+              enum: 
+              - day
+              - week
+              - month
+              - semestr                   
+    Register: 
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        agencyCode:
+          type: string
+    AddAgency:
+      type: object
+      properties:
+        email:
+          type: string
+        name:
+          type: string
+        ordersPeriod:
+          type: string
+          enum:
+          - day
+          - week
+          - month
+          - semestr                              

@@ -12,12 +12,14 @@ import { ReactComponent as PracowniaPosilkow } from 'assets/pracownia_posilkow.s
 import { darkTheme, lightTheme } from 'theme';
 import LogoutIcon from '@material-ui/icons/ExitToApp';
 import { LogoutPage } from 'pages/LogoutPage';
-import { TestPage } from 'pages/TestPage';
 import { LoginPage } from 'pages/LoginPage';
+import { EmptyPage } from 'pages/EmptyPage';
+import { AgenciesPage } from 'pages/AgenciesPage';
 import { DrawerItem } from './DrawerItem';
 import { AdminDrawer } from './AdminDrawer';
 import { AgencyDrawer } from './AgencyDrawer';
 import { ParentDrawer } from './ParentDrawer';
+import { GuardedRoute } from './GuardedRoute';
 
 // #region styles
 const Container = styled('div')(({ theme }) => ({
@@ -69,7 +71,8 @@ const App = () => {
               <Switch>
                 <Route path={['/logowanie', '/rejestracja']}><Redirect to="/" /></Route>
                 <Route path="/wyloguj" component={LogoutPage} />
-                <Route component={TestPage} />
+                <GuardedRoute path="/placowki" component={AgenciesPage} roles={['admin']} />
+                <Route component={EmptyPage} />
               </Switch>
             </Root>
           </ThemeProvider>

@@ -1,8 +1,8 @@
 import { Divider, List } from '@material-ui/core';
 import { AdminUser } from 'api/auth';
 import React, { FC } from 'react';
-import InboxIcon from '@material-ui/icons/Inbox';
-import TestIcon from '@material-ui/icons/ChildCare';
+import AgencyIcon from '@material-ui/icons/Business';
+import DashboardIcon from '@material-ui/icons/Dashboard';
 import { DrawerHeader } from './DrawerHeader';
 import { DrawerItem } from './DrawerItem';
 
@@ -17,8 +17,8 @@ export const AdminDrawer: FC<Props> = ({ user }) => (
     <Divider />
 
     <List component="nav">
-      <DrawerItem name="Test" icon={InboxIcon} to="/test" />
-      <DrawerItem name="Moje dzieci" icon={TestIcon} to="/dzieci" />
+      <DrawerItem name="Dashboard" icon={DashboardIcon} to="/" />
+      <DrawerItem name="Placówki" icon={AgencyIcon} to="/placowki" />
     </List>
   </>
 );

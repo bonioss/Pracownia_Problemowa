@@ -2,23 +2,13 @@ import {
   CssBaseline, Divider, List, styled, ThemeProvider,
 } from '@material-ui/core';
 import React from 'react';
-import { LoginPage } from 'pages/LoginPage';
-import {
-  Route, Switch, BrowserRouter, Redirect,
-} from 'react-router-dom';
+import { Switch, BrowserRouter } from 'react-router-dom';
 import { useAuth } from 'utils/authState';
-import {
-  Root, getDrawerSidebar, getSidebarContent,
-} from '@mui-treasury/layout';
+import { Root, getDrawerSidebar, getSidebarContent } from '@mui-treasury/layout';
 import layout from 'utils/layout';
-import InboxIcon from '@material-ui/icons/Inbox';
 import { ReactComponent as PracowniaPosilkow } from 'assets/pracownia_posilkow.svg';
-import { TestPage } from 'pages/TestPage';
 import { darkTheme, lightTheme } from 'theme';
 import LogoutIcon from '@material-ui/icons/ExitToApp';
-import TestIcon from '@material-ui/icons/ChildCare';
-import { LogoutPage } from 'pages/LogoutPage';
-import { DrawerHeader } from './DrawerHeader';
 import { DrawerItem } from './DrawerItem';
 import { AdminDrawer } from './AdminDrawer';
 import { AgencyDrawer } from './AgencyDrawer';
@@ -73,14 +63,18 @@ const App = () => {
                 </SidebarContent>
               </DrawerSidebar>
 
-              <UserRoutes user={user} />
+              <Switch>
+                <UserRoutes user={user} />
+              </Switch>
             </Root>
           </ThemeProvider>
         )}
 
         {!user && (
           <ThemeProvider theme={darkTheme}>
-            <GuestRoutes />
+            <Switch>
+              <GuestRoutes />
+            </Switch>
           </ThemeProvider>
         )}
       </BrowserRouter>

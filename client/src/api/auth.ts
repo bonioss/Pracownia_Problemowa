@@ -1,6 +1,8 @@
 import { api, ApiResponse } from 'api';
 import { useMutation } from 'react-query';
 
+export type Role = 'agency' | 'parent' | 'admin';
+
 export interface LoginParams {
   email: string;
   password: string;

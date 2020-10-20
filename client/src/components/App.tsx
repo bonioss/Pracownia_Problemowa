@@ -2,19 +2,22 @@ import {
   CssBaseline, Divider, List, styled, ThemeProvider,
 } from '@material-ui/core';
 import React from 'react';
-import { Switch, BrowserRouter } from 'react-router-dom';
+import {
+  Switch, BrowserRouter, Route, Redirect,
+} from 'react-router-dom';
 import { useAuth } from 'utils/authState';
 import { Root, getDrawerSidebar, getSidebarContent } from '@mui-treasury/layout';
 import layout from 'utils/layout';
 import { ReactComponent as PracowniaPosilkow } from 'assets/pracownia_posilkow.svg';
 import { darkTheme, lightTheme } from 'theme';
 import LogoutIcon from '@material-ui/icons/ExitToApp';
+import { LogoutPage } from 'pages/LogoutPage';
+import { TestPage } from 'pages/TestPage';
+import { LoginPage } from 'pages/LoginPage';
 import { DrawerItem } from './DrawerItem';
 import { AdminDrawer } from './AdminDrawer';
 import { AgencyDrawer } from './AgencyDrawer';
 import { ParentDrawer } from './ParentDrawer';
-import { UserRoutes } from './UserRoutes';
-import { GuestRoutes } from './GuestRoutes';
 
 // #region styles
 const Container = styled('div')(({ theme }) => ({
@@ -64,7 +67,9 @@ const App = () => {
               </DrawerSidebar>
 
               <Switch>
-                <UserRoutes user={user} />
+                <Route path={['/logowanie', '/rejestracja']}><Redirect to="/" /></Route>
+                <Route path="/wyloguj" component={LogoutPage} />
+                <Route component={TestPage} />
               </Switch>
             </Root>
           </ThemeProvider>
@@ -73,7 +78,8 @@ const App = () => {
         {!user && (
           <ThemeProvider theme={darkTheme}>
             <Switch>
-              <GuestRoutes />
+              <Route path="/logowanie"><LoginPage /></Route>
+              <Route><Redirect to="/logowanie" /></Route>
             </Switch>
           </ThemeProvider>
         )}

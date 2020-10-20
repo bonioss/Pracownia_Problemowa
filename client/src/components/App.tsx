@@ -20,6 +20,11 @@ import TestIcon from '@material-ui/icons/ChildCare';
 import { LogoutPage } from 'pages/LogoutPage';
 import { DrawerHeader } from './DrawerHeader';
 import { DrawerItem } from './DrawerItem';
+import { AdminDrawer } from './AdminDrawer';
+import { AgencyDrawer } from './AgencyDrawer';
+import { ParentDrawer } from './ParentDrawer';
+import { UserRoutes } from './UserRoutes';
+import { GuestRoutes } from './GuestRoutes';
 
 // #region styles
 const Container = styled('div')(({ theme }) => ({
@@ -48,53 +53,35 @@ const App = () => {
       <CssBaseline />
       <BrowserRouter>
         {user && (
-        <ThemeProvider theme={lightTheme}>
-          <Root scheme={layout} theme={lightTheme}>
-            <DrawerSidebar sidebarId="primarySidebar">
-              <SidebarContent>
-                <DrawerLogo />
+          <ThemeProvider theme={lightTheme}>
+            <Root scheme={layout} theme={lightTheme}>
+              <DrawerSidebar sidebarId="primarySidebar">
+                <SidebarContent>
+                  <DrawerLogo />
 
-                {(user.role === 'parent' || user.role === 'admin') && (
-                  <DrawerHeader name={`${user.firstName} ${user.lastName}`} email={user.email} />
-                )}
+                  {user.role === 'admin' && <AdminDrawer user={user} />}
+                  {user.role === 'agency' && <AgencyDrawer user={user} />}
+                  {user.role === 'parent' && <ParentDrawer user={user} />}
 
-                {user.role === 'agency' && (
-                  <DrawerHeader name={user.name} />
-                )}
+                  <div style={{ flex: 1 }} />
 
-                <Divider />
+                  <Divider />
 
-                <List component="nav">
-                  <DrawerItem name="Test" icon={InboxIcon} to="/test" />
-                  <DrawerItem name="Moje dzieci" icon={TestIcon} to="/dzieci" />
-                </List>
+                  <List component="nav">
+                    <DrawerItem name="Wyloguj" icon={LogoutIcon} to="/wyloguj" />
+                  </List>
+                </SidebarContent>
+              </DrawerSidebar>
 
-                <div style={{ flex: 1 }} />
-
-                <Divider />
-
-                <List component="nav">
-                  <DrawerItem name="Wyloguj" icon={LogoutIcon} to="/wyloguj" />
-                </List>
-              </SidebarContent>
-            </DrawerSidebar>
-
-            <Switch>
-              <Route path={['/logowanie', '/rejestracja']}><Redirect to="/" /></Route>
-              <Route path="/wyloguj" component={LogoutPage} />
-              <Route component={TestPage} />
-            </Switch>
-          </Root>
-        </ThemeProvider>
+              <UserRoutes user={user} />
+            </Root>
+          </ThemeProvider>
         )}
 
         {!user && (
-        <ThemeProvider theme={darkTheme}>
-          <Switch>
-            <Route path="/logowanie"><LoginPage /></Route>
-            <Route><Redirect to="/logowanie" /></Route>
-          </Switch>
-        </ThemeProvider>
+          <ThemeProvider theme={darkTheme}>
+            <GuestRoutes />
+          </ThemeProvider>
         )}
       </BrowserRouter>
     </Container>

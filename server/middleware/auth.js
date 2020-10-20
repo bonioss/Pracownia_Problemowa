@@ -12,7 +12,7 @@ exports.protect = asyncHandler(async(req, res, next) => {
       const decrypt = await jwt.verify(token, process.env.JWT_SECRET);
       
       req.user =  await User.findById(decrypt.id);
-      if(req.user === undefined) req.user = await Agency.findById(decrypt.id);
+      if(req.user === null) req.user = await Agency.findById(decrypt.id);
       next();
     } catch (err) {
       return res.status(500).json(err.toString());

@@ -7,7 +7,7 @@ export const TestPage = () => {
 
   return (
     <PageWrapper title="Costam">
-      Hi {user?.firstName}!
+      Hi {user?.email}!
     </PageWrapper>
   );
 };

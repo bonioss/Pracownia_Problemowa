@@ -54,7 +54,13 @@ const App = () => {
               <SidebarContent>
                 <DrawerLogo />
 
-                <DrawerHeader name={`${user.firstName} ${user.lastName}`} email={user.email} />
+                {(user.role === 'parent' || user.role === 'admin') && (
+                  <DrawerHeader name={`${user.firstName} ${user.lastName}`} email={user.email} />
+                )}
+
+                {user.role === 'agency' && (
+                  <DrawerHeader name={user.name} />
+                )}
 
                 <Divider />
 

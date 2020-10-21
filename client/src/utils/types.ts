@@ -1,7 +1,7 @@
 import { UseFormMethods } from 'react-hook-form';
 
 export interface Stylable {
-  className: string;
+  className?: string;
 }
 
 export interface FormProps<T> {

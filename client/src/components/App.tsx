@@ -12,16 +12,22 @@ import { ReactComponent as PracowniaPosilkow } from 'assets/pracownia_posilkow.s
 import { darkTheme, lightTheme } from 'theme';
 import LogoutIcon from '@material-ui/icons/ExitToApp';
 import { LogoutPage } from 'pages/LogoutPage';
-import { TestPage } from 'pages/TestPage';
 import { LoginPage } from 'pages/LoginPage';
+import { EmptyPage } from 'pages/EmptyPage';
+import { AgenciesPage } from 'pages/AgenciesPage';
+import { AddAgencyPage } from 'pages/AddAgencyPage';
+import { AgencyPage } from 'pages/AgencyPage';
+import { ReactQueryConfig, ReactQueryConfigProvider } from 'react-query';
 import { DrawerItem } from './DrawerItem';
 import { AdminDrawer } from './AdminDrawer';
 import { AgencyDrawer } from './AgencyDrawer';
 import { ParentDrawer } from './ParentDrawer';
+import { GuardedRoute } from './GuardedRoute';
 
 // #region styles
 const Container = styled('div')(({ theme }) => ({
   background: theme.palette.background.default,
+  height: '100vh',
 }));
 
 const DrawerLogo = styled(PracowniaPosilkow)(({ theme }) => ({
@@ -41,11 +47,18 @@ const App = () => {
   const DrawerSidebar = getDrawerSidebar(styled);
   const { user } = useAuth();
 
+  const reactQueryConfig: ReactQueryConfig = React.useMemo(() => ({
+    queries: {
+      queryFnParamsFilter: args => args.slice(1),
+    },
+  }), []);
+
   return (
-    <Container>
-      <CssBaseline />
-      <BrowserRouter>
-        {user && (
+    <ReactQueryConfigProvider config={reactQueryConfig}>
+      <Container>
+        <CssBaseline />
+        <BrowserRouter>
+          {user && (
           <ThemeProvider theme={lightTheme}>
             <Root scheme={layout} theme={lightTheme}>
               <DrawerSidebar sidebarId="primarySidebar">
@@ -69,22 +82,26 @@ const App = () => {
               <Switch>
                 <Route path={['/logowanie', '/rejestracja']}><Redirect to="/" /></Route>
                 <Route path="/wyloguj" component={LogoutPage} />
-                <Route component={TestPage} />
+                <GuardedRoute path="/placowki/nowa" component={AddAgencyPage} roles={['admin']} />
+                <GuardedRoute path="/placowki/:code" component={AgencyPage} roles={['admin']} />
+                <GuardedRoute path="/placowki" component={AgenciesPage} roles={['admin']} />
+                <Route component={EmptyPage} />
               </Switch>
             </Root>
           </ThemeProvider>
-        )}
+          )}
 
-        {!user && (
+          {!user && (
           <ThemeProvider theme={darkTheme}>
             <Switch>
               <Route path="/logowanie"><LoginPage /></Route>
               <Route><Redirect to="/logowanie" /></Route>
             </Switch>
           </ThemeProvider>
-        )}
-      </BrowserRouter>
-    </Container>
+          )}
+        </BrowserRouter>
+      </Container>
+    </ReactQueryConfigProvider>
   );
 };
 

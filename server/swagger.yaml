@@ -70,7 +70,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LoginUser'     
+                $ref: '#/components/schemas/LoginUser'   
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  errors:
+                    type: object     
+                    properties:
+                      key: 
+                        type: string               
         '401':
           description: Invalid agency code
           content:
@@ -83,6 +98,18 @@ paths:
                     default: false
                   error:
                     type: string  
+        '409':
+          description: 'E-mail already exsits'
+          content:
+            appication/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string              
   /auth/addAgency:
     post:
       summary: Add agency, private route for Admin
@@ -101,10 +128,46 @@ paths:
           content:
             application/json:
               schema:
+                $ref: '#/components/schemas/LoginAgency' 
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
                 type: object
                 properties:
                   success:
-                    type: boolean 
+                    type: boolean
+                    default: false
+                  errors:
+                    type: object     
+                    properties:
+                      key: 
+                        type: string   
+        '403':
+          description: Role is not authorized to access this route
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string                                                       
+        '409':
+          description: 'E-mail already exsits'
+          content:
+            appication/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string                         
   /kid/agencyAddKid:
     post:
       summary: Add kid by agency, private route for Agency
@@ -138,7 +201,119 @@ paths:
                     type: boolean
                     default: false
                   error:
-                    type: string                           
+                    type: string
+        '403':
+          description: Role is not authorized to access this route
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string                    
+  /agencies/myAgencies?page=${page}&limit=${limit}:
+    get:
+      summary: Get paginated list of agencies
+      tags: 
+      - Agency
+      parameters:
+      - in: query
+        name: page
+        schema:
+          type: integer
+        description: The number of choosen page
+      - in: query
+        name: limit
+        schema:
+          type: integer
+        description: The number of items     
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Agencies1'
+                  - $ref: '#/components/schemas/Agencies2'
+                  - $ref: '#/components/schemas/Agencies3' 
+        '403':
+          description: Role is not authorized to access this route
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string                          
+  /agencies/{agencyCode}:
+    get:
+      summary: Get agency by agency's code
+      tags: 
+      - Agency
+      parameters:
+      - in: path
+        name: agencyCode
+        schema:
+          type: string
+        description: Choosen Agency's code    
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginAgency'  
+        '403':
+          description: Role is not authorized to access this route
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string      
+    delete:
+      summary: Delete agency by agency's code. Parents and Kids are deleted too.
+      tags: 
+      - Agency
+      parameters:
+      - in: path
+        name: agencyCode
+        schema:
+          type: string
+        description: Choosen Agency's code    
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean 
+        '403':
+          description: Role is not authorized to access this route
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string                                                                                                        
 components:
   schemas:
     Login:
@@ -232,3 +407,116 @@ components:
           type: string
         agencyCode:
           type: string
+    NextPrev:
+      type: object
+      properties:
+        page:
+          type: number
+        limit:
+          type: number      
+    Agencies1:
+      type: object
+      properties:
+        success: 
+          type: boolean
+        data:
+          type: object
+          properties:
+            next:
+              type: object 
+              properties:
+                page:
+                  type: number
+                limit:
+                  type: number 
+            prev:
+              type: object 
+              properties:
+                page:
+                  type: number
+                limit:
+                  type: number                                                     
+            results:
+              type: array
+              items:
+                type: object
+                properties:
+                  email:
+                    type: string
+                  name:
+                    type: string
+                  agencyCode:
+                    type: string
+                  ordersPeriod:
+                    type: string
+                    enum: 
+                    - day
+                    - week
+                    - month
+                    - semestr
+    Agencies2:
+      type: object
+      properties:
+        success: 
+          type: boolean
+        data:
+          type: object
+          properties:
+            next:
+              type: object 
+              properties:
+                page:
+                  type: number
+                limit:
+                  type: number
+            results:
+              type: array
+              items:
+                type: object
+                properties:
+                  email:
+                    type: string
+                  name:
+                    type: string
+                  agencyCode:
+                    type: string
+                  ordersPeriod:
+                    type: string
+                    enum: 
+                    - day
+                    - week
+                    - month
+                    - semestr
+    Agencies3:
+      type: object
+      properties:
+        success: 
+          type: boolean
+        data:
+          type: object
+          properties:
+            prev:
+              type: object 
+              properties:
+                page:
+                  type: number
+                limit:
+                  type: number                                                     
+            results:
+              type: array
+              items:
+                type: object
+                properties:
+                  email:
+                    type: string
+                  name:
+                    type: string
+                  agencyCode:
+                    type: string
+                  ordersPeriod:
+                    type: string
+                    enum: 
+                    - day
+                    - week
+                    - month
+                    - semestr                                                 

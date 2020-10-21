@@ -126,7 +126,19 @@ paths:
                 type: object
                 properties:
                   success:
-                    type: boolean                          
+                    type: boolean
+        '401':
+          description: Invalid agency code
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string                           
 components:
   schemas:
     Login:

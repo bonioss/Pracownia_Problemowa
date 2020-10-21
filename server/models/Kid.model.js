@@ -16,6 +16,11 @@ const KidSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Agency code is required.'],
         maxlength: [36, 'Agency code cannot be longer than 36 letters.']
+    },
+    kidCode: {
+        type: String,
+        required: [true, 'Kid code is required.'],
+        maxlength: [36, 'Kid code cannot be longer than 36 letters.']
     }
 })
 

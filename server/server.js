@@ -21,6 +21,7 @@ connectDB();
 const authRoutes = require('./routes/auth.routes');
 const testRoutes = require('./routes/test.routes');
 const kidRoutes  = require('./routes/kid.routes');
+const parentRoutes  = require('./routes/parent.routes');
 const agencyRoutes = require('./routes/agency.routes');
 
 const app = express();
@@ -50,6 +51,7 @@ if (process.env.NODE_ENV === 'development') {
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/test', testRoutes);
 app.use('/api/v1/kid', kidRoutes);
+app.use('/api/v1/parent', parentRoutes);
 app.use('/api/v1/agencies', agencyRoutes);
 
 // Set error handler

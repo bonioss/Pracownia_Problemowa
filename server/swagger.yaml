@@ -190,8 +190,43 @@ paths:
                 properties:
                   success:
                     type: boolean
+  /parent/addKid:
+    post:
+      summary: Add kid to parent, private route for Parent
+      tags: 
+      - Parent
+      requestBody:
+        required: true
+        description: A JSON object that contains crudentials.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/addKid'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties: 
+                        firstName:
+                          type: string
+                        lastName:
+                          type: string
+                        agencyCode:
+                          type: string
+                        kidCode:
+                          type: string
         '401':
-          description: Invalid agency code
+          description: 'Invalid kid code'
           content:
             application/json:
               schema:
@@ -202,6 +237,18 @@ paths:
                     default: false
                   error:
                     type: string
+        '400':
+          description: 'This kid is already added to this parent'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string   
         '403':
           description: Role is not authorized to access this route
           content:
@@ -213,7 +260,35 @@ paths:
                     type: boolean
                     default: false
                   error:
-                    type: string                    
+                    type: string    
+                    
+  /parent/getMyKids:
+    get:
+      summary: Returns all kids of parent from the system
+      tags: 
+      - Parent
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                        firstName: 
+                          type: string
+                        lastName:
+                          type: string
+                        kidCode:
+                          type: string                    
+                   
   /agencies?page=${page}&limit=${limit}:
     get:
       summary: Get paginated list of agencies
@@ -251,7 +326,8 @@ paths:
                     type: boolean
                     default: false
                   error:
-                    type: string                          
+                    type: string  
+                    
   /agencies/{agencyCode}:
     get:
       summary: Get agency by agency's code
@@ -314,6 +390,7 @@ paths:
                     default: false
                   error:
                     type: string                                                                                                        
+
 components:
   schemas:
     Login:
@@ -407,6 +484,13 @@ components:
           type: string
         agencyCode:
           type: string
+
+    addKid: 
+      type: object
+      properties:
+        kidCode:
+          type: string
+
     NextPrev:
       type: object
       properties:

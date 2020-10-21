@@ -40,7 +40,11 @@ const UserSchema = new mongoose.Schema({
     wallet: {
         type: Number,
         default: 0
-    }
+    },
+    kids: [{
+        type: mongoose.Schema.ObjectId,
+        ref: 'Kid'
+    }]
 });
 
 // Password encryption

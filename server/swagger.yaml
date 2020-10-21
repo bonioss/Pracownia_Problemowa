@@ -435,7 +435,9 @@ components:
                 page:
                   type: number
                 limit:
-                  type: number                                                     
+                  type: number    
+            numberOfPages:
+              type: number                                                                   
             results:
               type: array
               items:
@@ -469,6 +471,8 @@ components:
                   type: number
                 limit:
                   type: number
+            numberOfPages:
+              type: number                  
             results:
               type: array
               items:
@@ -501,7 +505,9 @@ components:
                 page:
                   type: number
                 limit:
-                  type: number                                                     
+                  type: number  
+            numberOfPages:
+              type: number                                                         
             results:
               type: array
               items:

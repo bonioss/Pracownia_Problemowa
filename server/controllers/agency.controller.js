@@ -15,8 +15,8 @@ exports.getMyAgencies = asyncHandler(async (req, res, next) => {
     const endIndex = page * limit
 
     const results = {}
-
-    if (endIndex < await Agency.countDocuments().exec()) {
+    const count = await Agency.countDocuments().exec()
+    if (endIndex < count) {
       results.next = {
         page: page + 1,
         limit: limit
@@ -29,7 +29,8 @@ exports.getMyAgencies = asyncHandler(async (req, res, next) => {
         limit: limit
       }
     }
-
+    
+    results.numberOfPages = Math.ceil(count / limit);
     try {
       results.results = await Agency.find().limit(limit).skip(startIndex).select('-_id -__v').exec()
       res.paginatedResults = results

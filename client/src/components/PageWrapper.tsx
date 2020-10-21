@@ -5,6 +5,9 @@ import React, { FC } from 'react';
 // #region styles
 export const Content = styled(getContent(styled))(({ theme }) => ({
   background: theme.palette.background.default,
+  height: 'calc(100% - 64px)',
+  display: 'flex',
+  flexDirection: 'column',
 }));
 
 export const AppToolbar = styled(Toolbar)(({ theme }) => ({

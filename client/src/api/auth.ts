@@ -1,6 +1,7 @@
 import { api, ApiResponse } from 'api';
 import { useMutation } from 'react-query';
 
+// #region types
 export type Role = 'agency' | 'parent' | 'admin';
 
 export interface LoginParams {
@@ -27,6 +28,7 @@ export interface ParentUser {
 }
 
 export type OrdersPeriod = 'day' | 'week' | 'month' | 'semestr';
+export const ORDERS_PERIODS = ['day', 'week', 'month', 'semestr'] as const;
 
 export interface AgencyUser {
   role: 'agency';
@@ -38,6 +40,17 @@ export interface AgencyUser {
 
 export type User = AgencyUser | ParentUser | AdminUser;
 
+export interface NewAgency {
+  email: string;
+  name: string;
+  ordersPeriod: OrdersPeriod;
+}
+// #endregion
+
 export const useLogin = () => useMutation(
   (data: LoginParams) => api.post<ApiResponse<User>>('/auth/login', data).then(res => res.data),
+);
+
+export const useAddAgency = () => useMutation(
+  (data: NewAgency) => api.post<ApiResponse>('/auth/addAgency', data).then(res => res.data),
 );

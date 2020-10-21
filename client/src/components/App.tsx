@@ -15,6 +15,8 @@ import { LogoutPage } from 'pages/LogoutPage';
 import { LoginPage } from 'pages/LoginPage';
 import { EmptyPage } from 'pages/EmptyPage';
 import { AgenciesPage } from 'pages/AgenciesPage';
+import { AddAgencyPage } from 'pages/AddAgencyPage';
+import { AgencyPage } from 'pages/AgencyPage';
 import { DrawerItem } from './DrawerItem';
 import { AdminDrawer } from './AdminDrawer';
 import { AgencyDrawer } from './AgencyDrawer';
@@ -24,6 +26,7 @@ import { GuardedRoute } from './GuardedRoute';
 // #region styles
 const Container = styled('div')(({ theme }) => ({
   background: theme.palette.background.default,
+  height: '100vh',
 }));
 
 const DrawerLogo = styled(PracowniaPosilkow)(({ theme }) => ({
@@ -71,6 +74,8 @@ const App = () => {
               <Switch>
                 <Route path={['/logowanie', '/rejestracja']}><Redirect to="/" /></Route>
                 <Route path="/wyloguj" component={LogoutPage} />
+                <GuardedRoute path="/placowki/nowa" component={AddAgencyPage} roles={['admin']} />
+                <GuardedRoute path="/placowki/:id" component={AgencyPage} roles={['admin']} />
                 <GuardedRoute path="/placowki" component={AgenciesPage} roles={['admin']} />
                 <Route component={EmptyPage} />
               </Switch>

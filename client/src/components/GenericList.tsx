@@ -11,6 +11,7 @@ const StyledList = styled(List)({
   padding: 0,
   display: 'flex',
   flexDirection: 'column',
+  flex: 1,
 });
 
 const StyledPagination = withStyles({

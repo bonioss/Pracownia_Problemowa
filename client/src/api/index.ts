@@ -5,7 +5,7 @@ export interface ApiError {
   success: false;
 }
 
-export interface ApiResponse<T> {
+export interface ApiResponse<T = undefined> {
   data: T;
   success: true;
 }

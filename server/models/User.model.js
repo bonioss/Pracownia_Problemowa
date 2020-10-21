@@ -35,12 +35,16 @@ const UserSchema = new mongoose.Schema({
     agencyCode: {
         type: String,
         required: [true, 'Agency code is required.'],
-        maxlength: [36, 'Agency code cannot be longer than 100 letters.']
+        maxlength: [36, 'Agency code cannot be longer than 36 letters.']
     },
     wallet: {
         type: Number,
         default: 0
-    }
+    },
+    kids: [{
+        type: mongoose.Schema.ObjectId,
+        ref: 'Kid'
+    }]
 });
 
 // Password encryption

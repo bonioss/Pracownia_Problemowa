@@ -41,7 +41,7 @@ exports.addKid = asyncHandler(async (req, res, next) => {
 
 
 // @desc    Get all parent kids
-// @route   GET /api/v1/parents/myKids
+// @route   GET /api/v1/parent/myKids
 // @access  Private
 
 exports.getMyKids = asyncHandler(async (req, res, next) => {
@@ -50,8 +50,6 @@ exports.getMyKids = asyncHandler(async (req, res, next) => {
   if (req.user.role === 'parent') {
     const parent = await User.findOne({ _id: req.user._id });
     kids = await Kid.find({ '_id':{ $in: parent.kids } })
-  } else {
-    return next(new ErrorResponse('Not authorized', 401))
   }
   //Send response
   res.status(200).json({

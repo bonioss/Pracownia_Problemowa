@@ -3,8 +3,7 @@ const asyncHandler = require('../middleware/asyncHandler');
 const User = require('../models/User.model');
 const Agency = require('../models/Agency.model');
 const Kid = require('../models/Kid.model');
-const getSignedJwtToken = require('../middleware/getToken');
-const { v4: uuidv4 } = require('uuid');
+
 
 // @desc    Add kid by Agency
 // @route   POST /api/v1/auth/agencyAddKid

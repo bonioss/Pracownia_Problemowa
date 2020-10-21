@@ -124,11 +124,15 @@ res.status(200).json({
         errors[key] = error.errors[key].message;
       });
       let resp = {
+        success: false,
         errors,
       }
       return res.status(400).send(resp);
     }
-    res.status(500).send("Something went wrong");
+    res.status(500).send({
+      success: false,
+      error: "Something went wrong"
+    });
   }
 
 
@@ -147,7 +151,7 @@ exports.register=asyncHandler(async(req, res, next) => {
 
   //check if mail is unique
   if(checkCrudentials.user || checkCrudentials.agency) {
-    return next(new ErrorResponse('E-mail already exists'), 409)
+    return next(new ErrorResponse('E-mail already exists', 409))
   }
   //check if agency exist
   if(!agency) {
@@ -184,11 +188,15 @@ exports.register=asyncHandler(async(req, res, next) => {
         errors[key] = error.errors[key].message;
       });
       let resp = {
+        success: false,
         errors,
       }
       return res.status(400).send(resp);
     }
-    res.status(500).send("Something went wrong");
+    res.status(500).send({
+      success: false,
+      error: "Something went wrong"
+    });
   }
   
 })

@@ -32,6 +32,8 @@ export const AddAgencyPage = () => {
       onError: err => {
         setFormError(errorHandler(err, message => {
           switch (message) {
+            case 'E-mail already exists':
+              return 'Ten adres email jest już używany przez inną placówkę';
             default:
               return 'Wystąpił nieznany błąd, spróbuj ponownie.';
           }

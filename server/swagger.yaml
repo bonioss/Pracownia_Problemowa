@@ -183,7 +183,7 @@ paths:
                     type: boolean
                     default: false
                   error:
-                    type: string
+                    type: string    
 
 components:
   schemas:

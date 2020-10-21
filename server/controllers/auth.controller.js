@@ -4,7 +4,7 @@ const User = require('../models/User.model');
 const Agency = require('../models/Agency.model');
 const getSignedJwtToken = require('../middleware/getToken');
 const generator = require('generate-password');
-const { v4: uuidv4 } = require('uuid');
+const shortid = require('shortid');
 const nodemailer = require("nodemailer");
 
 // @desc    Login user
@@ -54,7 +54,6 @@ exports.login = asyncHandler(async (req, res, next) => {
       httpOnly: true,
     });
     
-    // const resData = await User.findById(user._id).select('-_id -password -__v');
     //Send repsonse
     res.status(200).json({
       success:true,
@@ -66,12 +65,32 @@ exports.login = asyncHandler(async (req, res, next) => {
 // @route   POST /api/v1/auth/addAgency
 // @access  Private, admin
 exports.addAgency = asyncHandler(async (req, res, next)=>{
-const {email, name, ordersPeriod} = req.body;
+  try {
+    const {email, name, ordersPeriod} = req.body;
+
+let checkCrudentials={};
+checkCrudentials.user = await User.findOne({email});
+checkCrudentials.agency = await Agency.findOne({email});
+
+  //check if mail is unique
+  if(checkCrudentials.user || checkCrudentials.agency) {
+    return next(new ErrorResponse('E-mail already exists', 409))
+  }
+
 const password = generator.generate({
   lenght: 10,
   numbers: true
 });
-const agencyCode = uuidv4();
+const agencyCode = shortid.generate();
+
+//create Agency
+const agency = await Agency.create({
+  email,
+  password,
+  name,
+  agencyCode,
+  ordersPeriod
+})
 
 //create mail transporter
 const transporter = nodemailer.createTransport({
@@ -89,20 +108,29 @@ const msg = {
   subject: "Password", // Subject line
   text: `Your password: ${password}, Your Code: ${agencyCode}`, // plain text body
 }
+
 //send mail
 const info = await transporter.sendMail(msg);
-//create Agency
-const agency = await Agency.create({
-  email,
-  password,
-  name,
-  agencyCode,
-  ordersPeriod
-})
 
+const resData = await Agency.findById(agency._id).select('-_id -password -__v');
 res.status(200).json({
-  success:true
+  success:true,
+  data: resData
 });
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      let errors = {};
+      Object.keys(error.errors).forEach((key) => {
+        errors[key] = error.errors[key].message;
+      });
+      let resp = {
+        errors,
+      }
+      return res.status(400).send(resp);
+    }
+    res.status(500).send("Something went wrong");
+  }
+
 
 });
 
@@ -110,13 +138,21 @@ res.status(200).json({
 // @route   POST /api/v1/auth/register
 // @access  Public
 exports.register=asyncHandler(async(req, res, next) => {
-  
-  const {email, password, firstName, lastName, agencyCode} = req.body;
+  try {
+    const {email, password, firstName, lastName, agencyCode} = req.body;
   const agency = await Agency.findOne({agencyCode});
+  let checkCrudentials = {};
+  checkCrudentials.user = await User.findOne({email});
+  checkCrudentials.agency = await Agency.findOne({email});
+
+  //check if mail is unique
+  if(checkCrudentials.user || checkCrudentials.agency) {
+    return next(new ErrorResponse('E-mail already exists'), 409)
+  }
   //check if agency exist
   if(!agency) {
     return next(new ErrorResponse('Invalid agency code', 401));
-  }
+  } 
   //create user
   const user = await User.create({
     email,
@@ -141,4 +177,18 @@ exports.register=asyncHandler(async(req, res, next) => {
     success:true,
     data: resData
   });
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      let errors = {};
+      Object.keys(error.errors).forEach((key) => {
+        errors[key] = error.errors[key].message;
+      });
+      let resp = {
+        errors,
+      }
+      return res.status(400).send(resp);
+    }
+    res.status(500).send("Something went wrong");
+  }
+  
 })

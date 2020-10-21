@@ -44,9 +44,9 @@ exports.getMyAgencies = asyncHandler(async (req, res, next) => {
     res.status(200).json({
         success: true,
         data: res.paginatedResults
-    })
+    });
 
-})
+});
 
 // @desc    Get agency by agencyCode
 // @route   GET /api/v1/agencies/:agencyCode
@@ -60,8 +60,8 @@ exports.getAgency = asyncHandler(async (req, res, next) => {
     res.status(200).json({
         success: true,
         data: agency
-    })
-})
+    });
+});
 
 // @desc    Delete agency by agencyCode
 // @route   DELETE /api/v1/agencies/:agencyCode
@@ -86,6 +86,6 @@ exports.deleteAgency = asyncHandler(async (req, res, next) => {
 
     res.status(200).json({
         success: true,
-    })
-})
+    });
+});
 

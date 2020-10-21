@@ -49,10 +49,11 @@ exports.login = asyncHandler(async (req, res, next) => {
    
     //Create cookie with token
     res.cookie('token', token, {
-      expires: new Date(Date.now() + process.env.JWT_EXPIRE),
+      expires: new Date(Date.now() + 86400000),
       secure: false, // set to true if your using https
       httpOnly: true,
     });
+ 
     
     //Send repsonse
     res.status(200).json({
@@ -171,7 +172,7 @@ exports.register=asyncHandler(async(req, res, next) => {
   
   //Create cookie with token
   res.cookie('token', token, {
-    expires: new Date(Date.now() + process.env.JWT_EXPIRE),
+    expires: new Date(Date.now() + 86400000),
     secure: false, // set to true if your using https
     httpOnly: true,
   });

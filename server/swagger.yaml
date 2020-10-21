@@ -214,7 +214,7 @@ paths:
                     default: false
                   error:
                     type: string                    
-  /agencies/myAgencies?page=${page}&limit=${limit}:
+  /agencies?page=${page}&limit=${limit}:
     get:
       summary: Get paginated list of agencies
       tags: 

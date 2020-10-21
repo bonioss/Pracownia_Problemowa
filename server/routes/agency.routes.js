@@ -4,12 +4,13 @@ const {getMyAgencies, getAgency, deleteAgency} = require('../controllers/agency.
 const { protect, authorize } = require('../middleware/auth');
 
 router
-.route('/myAgencies')
-.get(protect, authorize('admin'), getMyAgencies);
-
-router
 .route('/:agencyCode')
 .get(protect, authorize('admin'), getAgency)
 .delete(protect, authorize('admin'), deleteAgency);
+
+router
+.route('/')
+.get(protect, authorize('admin'), getMyAgencies);
+
 
 module.exports = router;

@@ -1,4 +1,5 @@
 import {
+  LinearProgress,
   List, Paper, styled, withStyles,
 } from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
@@ -33,14 +34,16 @@ interface Props {
     onPageChange: (event: ChangeEvent<unknown>, page: number) => void;
   };
   title?: string;
+  loading?: boolean;
 }
 
 export const GenericList: FC<Props & Stylable> = ({
-  items, header, pagination, title, ...props
+  items, header, pagination, title, loading, ...props
 }) => (
   <Paper {...props}>
     <StyledList>
       {header || (title && <GenericListHeader title={title} />)}
+      {loading && <LinearProgress />}
       {items}
     </StyledList>
 

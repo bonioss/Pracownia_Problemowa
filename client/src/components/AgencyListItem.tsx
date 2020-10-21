@@ -2,12 +2,12 @@ import {
   ListItem, ListItemAvatar, Avatar, ListItemText,
 } from '@material-ui/core';
 import AgencyIcon from '@material-ui/icons/Business';
-import { TempAgency } from 'pages/AgenciesPage';
+import { Agency } from 'api/agencies';
 import React, { FC } from 'react';
 import { periodLabel } from 'utils/mappers';
 
 interface Props {
-  data: TempAgency;
+  data: Agency;
   onClick?: () => void;
 }
 

@@ -1,12 +1,12 @@
 import { Button, styled } from '@material-ui/core';
-import { OrdersPeriod } from 'api/auth';
 import { AgencyListItem } from 'components/AgencyListItem';
 import { GenericList } from 'components/GenericList';
 import { GenericListHeader } from 'components/GenericListHeader';
 import { PageWrapper } from 'components/PageWrapper';
-import React, { ChangeEvent } from 'react';
+import React, { useState } from 'react';
 import AddIcon from '@material-ui/icons/Add';
 import { useHistory } from 'react-router-dom';
+import { useAgencies } from 'api/agencies';
 
 // #region styles
 const AgenciesList = styled(GenericList)({
@@ -17,38 +17,10 @@ const AgenciesList = styled(GenericList)({
 });
 // #endregion
 
-export interface TempAgency {
-  agencyCode: string;
-  email: string;
-  name: string;
-  ordersPeriod: OrdersPeriod;
-  id: string;
-}
-
-const fakeAgencies: TempAgency[] = [
-  {
-    agencyCode: '', email: 'aaa@bbb.com', name: 'Przedszkole nr 7', ordersPeriod: 'week', id: '1',
-  },
-  {
-    agencyCode: '', email: 'aaa@bbb.com', name: 'Przedszkole nr 77', ordersPeriod: 'week', id: '2',
-  },
-  {
-    agencyCode: '', email: 'aaa@bbb.com', name: 'Przedszkole nr 777', ordersPeriod: 'week', id: '3',
-  },
-  {
-    agencyCode: '', email: 'aaa@bbb.com', name: 'Przedszkole nr 123', ordersPeriod: 'week', id: '4',
-  },
-  {
-    agencyCode: '', email: 'aaa@bbb.com', name: 'Przedszkole nr -4', ordersPeriod: 'week', id: '5',
-  },
-];
-
 export const AgenciesPage = () => {
   const history = useHistory();
-
-  const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
-    console.log(value);
-  };
+  const [page, setPage] = useState(1);
+  const agencies = useAgencies({ limit: 10, page });
 
   return (
     <PageWrapper title="Placówki">
@@ -65,17 +37,18 @@ export const AgenciesPage = () => {
             </Button>
           </GenericListHeader>
         )}
-        items={fakeAgencies.map(agency => (
+        items={(agencies.resolvedData?.results || []).map(agency => (
           <AgencyListItem
             data={agency}
-            onClick={() => history.push(`/placowki/${agency.id}`)}
+            onClick={() => history.push(`/placowki/${agency.agencyCode}`)}
           />
         ))}
         pagination={{
-          count: fakeAgencies.length / 4,
-          page: 1,
-          onPageChange: handlePageChange,
+          count: agencies.resolvedData?.numberOfPages || 0,
+          page,
+          onPageChange: (_e, value) => setPage(value),
         }}
+        loading={agencies.isFetching}
       />
     </PageWrapper>
   );

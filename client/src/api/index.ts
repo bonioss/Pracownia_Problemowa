@@ -10,6 +10,22 @@ export interface ApiResponse<T = undefined> {
   success: true;
 }
 
+export interface PaginatedApiResponse<T> {
+  data: {
+    next?: {
+      page: number;
+      limit: number;
+    };
+    prev?: {
+      page: number;
+      limit: number;
+    };
+    numberOfPages: number;
+    results: T[];
+  };
+  success: true;
+}
+
 export const api = axios.create({
   baseURL: process.env.REACT_APP_SERVER_URL,
   headers: {

@@ -17,6 +17,7 @@ import { EmptyPage } from 'pages/EmptyPage';
 import { AgenciesPage } from 'pages/AgenciesPage';
 import { AddAgencyPage } from 'pages/AddAgencyPage';
 import { AgencyPage } from 'pages/AgencyPage';
+import { ReactQueryConfig, ReactQueryConfigProvider } from 'react-query';
 import { DrawerItem } from './DrawerItem';
 import { AdminDrawer } from './AdminDrawer';
 import { AgencyDrawer } from './AgencyDrawer';
@@ -46,11 +47,18 @@ const App = () => {
   const DrawerSidebar = getDrawerSidebar(styled);
   const { user } = useAuth();
 
+  const reactQueryConfig: ReactQueryConfig = React.useMemo(() => ({
+    queries: {
+      queryFnParamsFilter: args => args.slice(1),
+    },
+  }), []);
+
   return (
-    <Container>
-      <CssBaseline />
-      <BrowserRouter>
-        {user && (
+    <ReactQueryConfigProvider config={reactQueryConfig}>
+      <Container>
+        <CssBaseline />
+        <BrowserRouter>
+          {user && (
           <ThemeProvider theme={lightTheme}>
             <Root scheme={layout} theme={lightTheme}>
               <DrawerSidebar sidebarId="primarySidebar">
@@ -75,24 +83,25 @@ const App = () => {
                 <Route path={['/logowanie', '/rejestracja']}><Redirect to="/" /></Route>
                 <Route path="/wyloguj" component={LogoutPage} />
                 <GuardedRoute path="/placowki/nowa" component={AddAgencyPage} roles={['admin']} />
-                <GuardedRoute path="/placowki/:id" component={AgencyPage} roles={['admin']} />
+                <GuardedRoute path="/placowki/:code" component={AgencyPage} roles={['admin']} />
                 <GuardedRoute path="/placowki" component={AgenciesPage} roles={['admin']} />
                 <Route component={EmptyPage} />
               </Switch>
             </Root>
           </ThemeProvider>
-        )}
+          )}
 
-        {!user && (
+          {!user && (
           <ThemeProvider theme={darkTheme}>
             <Switch>
               <Route path="/logowanie"><LoginPage /></Route>
               <Route><Redirect to="/logowanie" /></Route>
             </Switch>
           </ThemeProvider>
-        )}
-      </BrowserRouter>
-    </Container>
+          )}
+        </BrowserRouter>
+      </Container>
+    </ReactQueryConfigProvider>
   );
 };
 

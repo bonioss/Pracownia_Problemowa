@@ -127,8 +127,41 @@ paths:
                 properties:
                   success:
                     type: boolean
+  /parent/addKid:
+    post:
+      summary: Add kid to parent, private route for Parent
+      tags: 
+      - Parent
+      requestBody:
+        required: true
+        description: A JSON object that contains crudentials.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/addKid'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties: 
+                      firstName:
+                        type: string
+                      lastName:
+                        type: string
+                      agencyCode:
+                        type: string
+                      kidCode:
+                        type: string
         '401':
-          description: Invalid agency code
+          description: 'Invalid kid code'
           content:
             application/json:
               schema:
@@ -138,7 +171,20 @@ paths:
                     type: boolean
                     default: false
                   error:
-                    type: string                           
+                    type: string
+        '400':
+          description: 'This kid is already added to this parent'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string
+
 components:
   schemas:
     Login:
@@ -231,4 +277,9 @@ components:
         lastName:
           type: string
         agencyCode:
+          type: string
+    addKid: 
+      type: object
+      properties:
+        kidCode:
           type: string

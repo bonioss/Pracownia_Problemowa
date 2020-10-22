@@ -27,7 +27,7 @@ export interface PaginatedApiResponse<T> {
 }
 
 export const api = axios.create({
-  baseURL: process.env.REACT_APP_SERVER_URL,
+  baseURL: '/api/v1/',
   headers: {
     'Content-Type': 'application/json',
   },

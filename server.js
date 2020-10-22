@@ -6,6 +6,7 @@ const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const path = require('path');
 //for documentation
 const swaggerUi = require('swagger-ui-express'),
 YAML = require('yamljs');
@@ -25,6 +26,9 @@ const parentRoutes  = require('./routes/parent.routes');
 const agencyRoutes = require('./routes/agency.routes');
 
 const app = express();
+
+// Serve React app
+app.use(express.static(path.join(__dirname, 'client/build')));
 
 // Body parser
 app.use(express.json());
@@ -53,6 +57,11 @@ app.use('/api/v1/test', testRoutes);
 app.use('/api/v1/kid', kidRoutes);
 app.use('/api/v1/parent', parentRoutes);
 app.use('/api/v1/agencies', agencyRoutes);
+
+// Fallback for React app
+app.get('*', (req,res) =>{
+  res.sendFile(path.join(__dirname+'/client/build/index.html'));
+});
 
 // Set error handler
 app.use(errorHandler);

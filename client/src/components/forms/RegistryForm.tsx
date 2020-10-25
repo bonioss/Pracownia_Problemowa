@@ -46,9 +46,8 @@ export const schema = z.object({
 })
   .refine(data => data.password === data.passwordConfirm, {
     message: 'Hasła się nie zgadzają',
-    // path: ['confirm'],
+    path: ['passwordConfirm'],
   });
-// confirm password nie pokazuje bledu nwm czy robic nowy handler or wut
 
 export const RegistryForm: FC<FormProps<RegisterParams> & Stylable> = ({
   onSubmit, error, form, ...props

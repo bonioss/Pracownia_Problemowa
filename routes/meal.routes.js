@@ -1,17 +1,24 @@
 const express = require('express');
 const router = express.Router();
-const {addMeal, myMeals} = require('../controllers/meal.controller');
+const {addMeal, myMeals, deleteMeal} = require('../controllers/meal.controller');
 const { protect, authorize } = require('../middleware/auth');
 
-// adding meal by admin
-// showing meal by date
+// show meal by date
 
 router
 .route('/myMeals')
 .get(protect, authorize('admin'), myMeals);
 
+// add meal
+
 router
 .route('/addMeal')
 .post(protect, authorize('admin'), addMeal);
+
+// delete meal
+
+// router
+// .route('/deleteMeal')
+// .post(protect, authorize('admin'), deleteMeal);
 
 module.exports = router;

@@ -95,6 +95,13 @@ exports.agencyDeleteKid = asyncHandler(async (req, res, next) => {
     return next(new ErrorResponse(`Kid with code ${req.params.kidCode} does not belong to your's agency`, 401))
   }
 
+  const parents = await User.find({ role:"parent", agencyCode: req.user.agencyCode });
+
+  parents.forEach(function(parent) {
+    parent.kids.pop(kid)
+    parent.save()
+  })
+
   await kid.remove();
 
   res.status(200).json({

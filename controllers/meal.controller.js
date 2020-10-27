@@ -69,3 +69,10 @@ exports.myMeals = asyncHandler(async (req, res, next) => {
     });
 
 });
+
+
+// @desc    Delete meal 
+// @route   DELETE /api/v1/meal/deleteMeal
+// @access  Private, admin
+
+// missing

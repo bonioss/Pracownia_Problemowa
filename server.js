@@ -24,6 +24,7 @@ const testRoutes = require('./routes/test.routes');
 const kidRoutes  = require('./routes/kid.routes');
 const parentRoutes  = require('./routes/parent.routes');
 const agencyRoutes = require('./routes/agency.routes');
+const mealRoutes = require('./routes/meal.routes')
 
 const app = express();
 
@@ -57,6 +58,7 @@ app.use('/api/v1/test', testRoutes);
 app.use('/api/v1/kid', kidRoutes);
 app.use('/api/v1/parent', parentRoutes);
 app.use('/api/v1/agencies', agencyRoutes);
+app.use('/api/v1/meal', mealRoutes);
 
 // Fallback for React app
 app.get('*', (req,res) =>{

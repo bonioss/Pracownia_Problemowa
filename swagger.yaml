@@ -390,7 +390,82 @@ paths:
                     default: false
                   error:
                     type: string                                                                                                        
-
+  /orders/{kidCode}:
+    post:
+      summary: Create order for choosen kid
+      tags: 
+      - Order
+      parameters:
+      - in: path
+        name: kidCode
+        schema:
+          type: string
+        description: Choosen Kid's code
+      requestBody:
+        required: true
+        description: A JSON object that contains crudentials.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createOrder'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        '400':
+          description: This kid is already added to this parent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string       
+        '403':
+          description: Role is not authorized to access this route
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string                            
+        '404':
+          description: Kid with code not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string
+        '409':
+          description: Previous order has not finished OR incompatible order period OR date earlier than today
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string    
 components:
   schemas:
     Login:
@@ -447,7 +522,15 @@ components:
               - day
               - week
               - month
-              - semestr                   
+              - semestr
+            winterTermEnd:
+              type: string
+              format: date
+              example: "2021-01-30"
+            summerTermEnd: 
+              type: string
+              format: date
+              example: "2021-01-30"                                  
     Register: 
       type: object
       properties:
@@ -474,7 +557,15 @@ components:
           - day
           - week
           - month
-          - semestr                              
+          - semestr
+        winterTermEnd:
+          type: string
+          format: date
+          example: "2021-01-30"
+        summerTermEnd: 
+          type: string
+          format: date
+          example: "2021-01-30"                                  
     AgencyAddKid: 
       type: object
       properties:
@@ -609,4 +700,28 @@ components:
                     - day
                     - week
                     - month
-                    - semestr                                                 
+                    - semestr 
+    createOrder: 
+      type: object
+      properties:
+        period: 
+          type: string
+        startDate: 
+          type: string
+          format: date
+          example: "2021-01-30"
+        orders:
+          type: array
+          items:
+            type: object
+            properties:
+              day: 
+                type: integer
+                enum: [0, 1, 2, 3, 4, 5, 6]
+              types: 
+                type: array
+                items:
+                  type: string
+                  enum: ['breakfast', 'lunch', 'soup', 'main dish', 'dinner', 'tea time']
+
+

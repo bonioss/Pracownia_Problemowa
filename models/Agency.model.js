@@ -29,12 +29,21 @@ const AgencySchema = new mongoose.Schema({
     agencyCode: {
         type: String,
         required: [true, 'Agency code is required.'],
-        maxlength: [36, 'Agency code cannot be longer than 100 letters.']
+        maxlength: [36, 'Agency code cannot be longer than 36 letters.']
     },
     ordersPeriod: {
         type: String,
         enum: ['day', 'week', 'month', 'semestr'],
         required: [true, 'Period of orders is required.']
+    },
+    winterTermEnd: {
+        type: Date,
+        default: Date.now
+
+    },
+    summerTermEnd: {
+        type: Date,
+        default: Date.now
     }
 });
 

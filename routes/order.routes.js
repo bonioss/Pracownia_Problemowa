@@ -1,10 +1,34 @@
 const express = require('express');
-const { createOrder } = require('../controllers/order.controller');
+const { 
+    createOrder,
+    getOrdersByAgencyCode, 
+    getOrdersByKidCode, 
+    getOrderById, 
+    getAvailableDate,
+    updatePaymentStatus
+} = require('../controllers/order.controller');
 const router = express.Router();
-const { protect } = require('../middleware/auth');
+const { protect, authorize } = require('../middleware/auth');
 
 router
     .route('/:kidCode')
-    .post(protect, createOrder);
+    .post(protect, authorize('agency', 'parent'), createOrder)
+    .get(protect, authorize('parent', 'agency'), getOrdersByKidCode);
+
+router
+    .route('/agencyOrders/:agencyCode')
+    .get(protect, authorize('admin', 'agency'), getOrdersByAgencyCode);
+
+router
+    .route('/order/:id')
+    .get(protect, authorize('admin', 'agency', 'parent'), getOrderById);    
+
+router
+    .route('/date/:kidCode')
+    .get(protect, authorize('parent', 'agency'), getAvailableDate);    
+
+router
+    .route('/payment/:id')
+    .post(protect, authorize('admin', 'agency'), updatePaymentStatus);
     
 module.exports = router;

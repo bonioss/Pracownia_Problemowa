@@ -28,11 +28,12 @@ const getDate = (date, day) => {
 }
 
 // @desc    Create order for choosen kid
-// @route   POST /api/v1/order/:kidCode
+// @route   POST /api/v1/orders/:kidCode
 // @access  Private
 exports.createOrder = asyncHandler(async (req, res, next) => {
     const user = req.user;
-    let { period, startDate, orders, comments } = req.body;
+    let { startDate, orders, comments } = req.body;
+    console.log(orders);
     startDate = new Date(startDate);
     let meals = [];
     let endDate = new Date(startDate);
@@ -47,10 +48,7 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
     if(!kid) {
         return next (new ErrorResponse(`Kid with code ${req.params.kidCode} not found`, 404));
     }
-    //check if order period is proper
-    if(period !== agency.ordersPeriod) {
-        return next (new ErrorResponse(`Please provide proper period`, 409));
-    }
+
     //check if agency or parent has choosen kid
     if(user.role === 'agency') {
       const kids = await Kid.find({agencyCode: user.agencyCode});
@@ -79,7 +77,7 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
         }
     }
 
-    if(period==='day') {
+    if(agency.ordersPeriod==='day') {
         for (const o of orders) {
             for (const t of o.types) {
                 let price = getType(t);
@@ -90,14 +88,18 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
                 })
             }
         }
+        if(meals.length===0) {
+            return next (new ErrorResponse(`Please provide some meal`, 409)); 
+        }
         let finalPrice = 0;
         for(m of meals) {
             finalPrice += m.price;
         }
+        if(user.wallet > 0) finalPrice -= user.wallet
         const order = await Order.create({
             agencyCode: user.agencyCode,
             kidCode: req.params.kidCode,
-            period,
+            period: agency.ordersPeriod,
             meals,
             price: finalPrice,
             comments,
@@ -109,7 +111,7 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
             data: order
         });
     }
-    else if(period === 'week') {
+    else if(agency.ordersPeriod === 'week') {
     
     endDate.setDate(endDate.getDate() + 7);
 
@@ -126,15 +128,18 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
             })
         }
     }
+    if(meals.length===0) {
+        return next (new ErrorResponse(`Please provide some meal`, 409)); 
+    }
     let finalPrice = 0;
     for(m of meals) {
         finalPrice += m.price;
     }
-    
+    if(user.wallet > 0) finalPrice -= user.wallet
     const order = await Order.create({
         agencyCode: user.agencyCode,
         kidCode: req.params.kidCode,
-        period,
+        period: agency.ordersPeriod,
         meals,
         price: finalPrice,
         comments,
@@ -146,9 +151,9 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
         data: order
     });
     }
-    if(period === 'month' || period==='semestr') {
-        if(period==='month') endDate.setDate(endDate.getDate() + 30);
-        else if(period==='semestr' && startDate>agency.winterTermEnd) endDate = agency.summerTermEnd;
+    if(agency.ordersPeriod === 'month' || agency.ordersPeriod ==='semestr') {
+        if(agency.ordersPeriod ==='month') endDate.setDate(endDate.getDate() + 30);
+        else if(agency.ordersPeriod ==='semestr' && startDate>agency.winterTermEnd) endDate = agency.summerTermEnd;
         else endDate = agency.winterTermEnd;
         for (const o of orders) {      
             let date = new Date(startDate);
@@ -166,14 +171,18 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
                 }
             }
         }
+        if(meals.length===0) {
+            return next (new ErrorResponse(`Please provide some meal`, 409)); 
+        }
         let finalPrice = 0;
         for(m of meals) {
             finalPrice += m.price;
         }
+        if(user.wallet > 0) finalPrice -= user.wallet
         const order = await Order.create({
             agencyCode: user.agencyCode,
             kidCode: req.params.kidCode,
-            period,
+            period: agency.ordersPeriod,
             meals,
             price: finalPrice,
             comments,
@@ -186,4 +195,190 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
         });
     }
 
-})
+});
+
+// @desc    Get orders by agencyCode
+// @route   GET /api/v1/orders/agencyOrders/:agencyCode?page=${page}&limit=${limit}
+// @access  Private, admin, agency
+exports.getOrdersByAgencyCode = asyncHandler(async(req, res, next) => {
+    const page = parseInt(req.query.page)
+    const limit = parseInt(req.query.limit)
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const results = {};
+    const count = await Order.countDocuments({agencyCode: req.params.agencyCode}).exec();
+    if(count === 0) {
+        return next(new ErrorResponse(`Agency with code ${req.params.agencyCode} has not any orders.`, 404))
+    }
+    if (endIndex < count) {
+        results.next = {
+          page: page + 1,
+          limit: limit
+        }
+      }
+      
+      if (startIndex > 0) {
+        results.previous = {
+          page: page - 1,
+          limit: limit
+        }
+    }
+
+    results.numberOfPages = Math.ceil(count / limit);
+    try {
+      results.results = await Order.find({
+          agencyCode: req.params.agencyCode
+        })
+        .limit(limit)
+        .skip(startIndex)
+        .select('-meals -__v')
+        .exec()
+      res.paginatedResults = results
+      next()
+    } catch (e) {
+      res.status(500).json({
+        success: false,  
+        error: e.message 
+    })
+    }
+    res.status(200).json({
+        success: true,
+        data: res.paginatedResults
+    });
+});
+
+// @desc    Get orders by kidCode
+// @route   GET /api/v1/orders/:kidCode?page=${page}&limit=${limit}
+// @access  Private, admin
+exports.getOrdersByKidCode = asyncHandler(async(req, res, next) => {
+    const page = parseInt(req.query.page)
+    const limit = parseInt(req.query.limit)
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const results = {};
+    const count = await Order.countDocuments({kidCode: req.params.kidCode}).exec();
+    if(count === 0) {
+        return next(new ErrorResponse(`Kid with code ${req.params.kidCode} has not any orders.`, 404))
+    }
+    if (endIndex < count) {
+        results.next = {
+          page: page + 1,
+          limit: limit
+        }
+      }
+      
+      if (startIndex > 0) {
+        results.previous = {
+          page: page - 1,
+          limit: limit
+        }
+    }
+
+    results.numberOfPages = Math.ceil(count / limit);
+    try {
+      results.results = await Order.find({
+          kidCode: req.params.kidCode
+        })
+        .limit(limit)
+        .skip(startIndex)
+        .select('-meals -__v')
+        .exec()
+      res.paginatedResults = results
+      next()
+    } catch (e) {
+      res.status(500).json({
+        success: false,  
+        error: e.message 
+    })
+    }
+    res.status(200).json({
+        success: true,
+        data: res.paginatedResults
+    });
+});
+
+// @desc    Get order by ID
+// @route   GET /api/v1/orders/order/:id?page=${page}&limit=${limit}
+// @access  Private, admin
+exports.getOrderById = asyncHandler(async(req, res, next) => {
+    const page = parseInt(req.query.page)
+    const limit = parseInt(req.query.limit)
+
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const results = {};
+    let order = await Order.findById({_id: req.params.id});
+    
+    // console.log(count);
+    if(!order) {
+        return next(new ErrorResponse(`Order with code ${req.params.id} has not exist.`, 404))
+    }
+    if (endIndex < order.meals.length) {
+        results.next = {
+          page: page + 1,
+          limit: limit
+        }
+      }
+      
+      if (startIndex > 0) {
+        results.previous = {
+          page: page - 1,
+          limit: limit
+        }
+    }
+
+    results.numberOfPages = Math.ceil(order.meals.length / limit);
+    try {
+      order.meals =  order.meals.slice((page-1)*limit, page*limit);
+      results.results = order
+      res.paginatedResults = results
+      next()
+    } catch (e) {
+      res.status(500).json({
+        success: false,  
+        error: e.message 
+    })
+    }
+    res.status(200).json({
+        success: true,
+        data: res.paginatedResults
+    });
+});
+
+// @desc    Get available date for order
+// @route   GET /api/v1/orders/date/:kidCode
+// @access  Private, admin
+exports.getAvailableDate=asyncHandler (async (req, res, next) => {
+    const kid = await Kid.findOne({kidCode: req.params.kidCode});
+    if(!kid) {
+        return next(new ErrorResponse(`Kid with code ${req.params.kidCode} does not exist.`, 404))
+    }
+
+    const lastOrder = await Order.findOne({kidCode: req.params.kidCode}).sort({endDate: -1});
+    let date = new Date (Date.now());
+    date.setDate(date.getDate()+1);
+    if(lastOrder) {
+        date = new Date (lastOrder.endDate);
+        date.setDate(date.getDate()+1);
+    }
+    res.status(200).json({
+        success: true,
+        data: date,
+    })
+});
+
+// @desc    Update payment status
+// @route   POST /api/v1/orders/payment/:id
+// @access  Private, admin
+exports.updatePaymentStatus=asyncHandler (async (req, res, next) => {
+    await Order.updateOne({_id: req.params.id}, {paid: true});
+    
+    res.status(200).json({
+        success: true,
+    })
+});

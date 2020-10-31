@@ -390,16 +390,21 @@ exports.deleteMeal = asyncHandler(async (req, res, next) => {
     const order = await Order.findById(req.params.id);
     const user = req.user;
     let meal = {};
+
+    if(!order) {
+        return next(new ErrorResponse(`Order with code ${req.params.id} does not exist.`, 404));
+    }
     for(const m of order.meals) {
         if (m.id === req.params.mealId) {
             meal = m;
             break;
         }
     }
-    // console.log(meal);
-    if(!order) {
-        return next(new ErrorResponse(`Order with code ${req.params.id} does not exist.`, 404));
+
+    if(Object.prototype.toString.call(meal) === '[object Object]' && JSON.stringify(meal) === '{}'){
+        return next(new ErrorResponse(`Meal with code ${req.params.mealId} does not exist.`, 404));  
     }
+    
     if(!order.paid) {
         // console.log(meal.price);
         let newPrice = order.price - meal.price;
@@ -431,6 +436,5 @@ exports.deleteMeal = asyncHandler(async (req, res, next) => {
     
     res.status(200).json({
         success: true,
-        data: order.meals
     })
 })

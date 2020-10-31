@@ -33,7 +33,7 @@ router
     .post(protect, authorize('admin', 'agency'), updatePaymentStatus);
 
 router
-    .route('/order/:id/kid/:kidId/meal/:mealId')
+    .route('/order/:id/kid/:kidCode/meal/:mealId')
     .delete(protect, authorize('parent', 'agency'), deleteMeal);    
     
 module.exports = router;

@@ -690,6 +690,59 @@ paths:
                   error:
                     type: string  
 
+  /orders/order/{id}/kid/{kidCode}/meal/{mealId}:
+    delete:
+      summary: Delete meal
+      tags: 
+      - Order
+      parameters:
+      - in: path
+        name: id
+        schema: 
+          type: string
+        description: Order's id
+      - in: path
+        name: kidCode
+        schema:
+          type: string
+        description: Kid's id 
+      - in: path
+        name: mealId
+        schema:
+          type: string
+        description: Meal's id          
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  success:
+                    type: boolean
+        '403':
+          description: Role is not authorized to access this route
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string 
+        '404':
+          description: Order not found OR Meal not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string  
 components:
   schemas:
     Login:

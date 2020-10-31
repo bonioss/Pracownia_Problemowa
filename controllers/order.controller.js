@@ -408,8 +408,7 @@ exports.deleteMeal = asyncHandler(async (req, res, next) => {
 
     let mealDate = new Date (meal.date);
     mealDate.setDate(mealDate.getDate() - 1);
-    console.log(`Date now: ${date}`);
-    console.log(`Date meal: ${mealDate}`);
+
     if(date >= mealDate) {
         return next(new ErrorResponse(`You can not delete this meal`, 409));  
     }

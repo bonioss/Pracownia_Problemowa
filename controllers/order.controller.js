@@ -251,7 +251,7 @@ exports.getOrdersByAgencyCode = asyncHandler(async(req, res, next) => {
 
 // @desc    Get orders by kidCode
 // @route   GET /api/v1/orders/:kidCode?page=${page}&limit=${limit}
-// @access  Private, admin
+// @access  Private, agency, parent
 exports.getOrdersByKidCode = asyncHandler(async(req, res, next) => {
     const page = parseInt(req.query.page)
     const limit = parseInt(req.query.limit)
@@ -303,7 +303,7 @@ exports.getOrdersByKidCode = asyncHandler(async(req, res, next) => {
 
 // @desc    Get order by ID
 // @route   GET /api/v1/orders/order/:id?page=${page}&limit=${limit}
-// @access  Private, admin
+// @access  Private
 exports.getOrderById = asyncHandler(async(req, res, next) => {
     const page = parseInt(req.query.page)
     const limit = parseInt(req.query.limit)
@@ -352,7 +352,7 @@ exports.getOrderById = asyncHandler(async(req, res, next) => {
 
 // @desc    Get available date for order
 // @route   GET /api/v1/orders/date/:kidCode
-// @access  Private, admin
+// @access  Private, agency, parent
 exports.getAvailableDate=asyncHandler (async (req, res, next) => {
     const kid = await Kid.findOne({kidCode: req.params.kidCode});
     if(!kid) {
@@ -374,11 +374,67 @@ exports.getAvailableDate=asyncHandler (async (req, res, next) => {
 
 // @desc    Update payment status
 // @route   POST /api/v1/orders/payment/:id
-// @access  Private, admin
-exports.updatePaymentStatus=asyncHandler (async (req, res, next) => {
+// @access  Private, admin, agency
+exports.updatePaymentStatus = asyncHandler (async (req, res, next) => {
     await Order.updateOne({_id: req.params.id}, {paid: true});
     
     res.status(200).json({
         success: true,
     })
 });
+
+// @desc    Delete meal
+// @route   Delete /api/v1/orders/order/:id/kid/:kidCode/meal/:mealId
+// @access  Private, admin
+exports.deleteMeal = asyncHandler(async (req, res, next) => {
+    const order = await Order.findById(req.params.id);
+    const user = req.user;
+    let meal = {};
+
+    if(!order) {
+        return next(new ErrorResponse(`Order with code ${req.params.id} does not exist.`, 404));
+    }
+    for(const m of order.meals) {
+        if (m.id === req.params.mealId) {
+            meal = m;
+            break;
+        }
+    }
+
+    if(Object.prototype.toString.call(meal) === '[object Object]' && JSON.stringify(meal) === '{}'){
+        return next(new ErrorResponse(`Meal with code ${req.params.mealId} does not exist.`, 404));  
+    }
+    
+    if(!order.paid) {
+        // console.log(meal.price);
+        let newPrice = order.price - meal.price;
+        await order.meals.pull(req.params.mealId);
+        await Order.updateOne({_id: req.params.id}, {price: newPrice, meals: order.meals});
+    } else {
+        if(user.role==='parent') {
+            user.wallet += meal.price;
+            await User.updateOne({_id: user.id}, {wallet: user.wallet});
+            order.meals.pull(req.params.mealId);
+            await Order.updateOne({_id: req.params.id}, {meals: order.meals});
+        } else if (user.role==='agency') {
+            const parents = await User.find({agencyCode: user.agencyCode});
+            
+            for (const p of parents) {
+                let kid = await Kid.findOne({kidCode: req.params.kidCode});
+                if(!kid) {
+                    return next(new ErrorResponse(`Kid with code ${req.params.kidCode} does not exist.`, 404))
+                }
+                if(p.kids.includes(kid.id)) {
+                    p.wallet += meal.price;
+                    await User.updateOne({_id: p.id}, {wallet: p.wallet});
+                    order.meals.pull(req.params.mealId);
+                    await Order.updateOne({_id: req.params.id}, {meals: order.meals});
+                }
+            }
+        }
+    }
+    
+    res.status(200).json({
+        success: true,
+    })
+})

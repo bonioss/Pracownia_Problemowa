@@ -5,7 +5,8 @@ const {
     getOrdersByKidCode, 
     getOrderById, 
     getAvailableDate,
-    updatePaymentStatus
+    updatePaymentStatus,
+    deleteMeal
 } = require('../controllers/order.controller');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
@@ -30,5 +31,9 @@ router
 router
     .route('/payment/:id')
     .post(protect, authorize('admin', 'agency'), updatePaymentStatus);
+
+router
+    .route('/order/:id/kid/:kidCode/meal/:mealId')
+    .delete(protect, authorize('parent', 'agency'), deleteMeal);    
     
 module.exports = router;

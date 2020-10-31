@@ -10,7 +10,7 @@ const Kid = require('../models/Kid.model');
 
 exports.addKid = asyncHandler(async (req, res, next) => {
 
-    const {kidCode} = req.body;
+    const kidCode = req.params.kidCode;
     const kid = await Kid.findOne({ kidCode: kidCode });
     //check if kid identified by code exist
     if(!kid) {

@@ -6,7 +6,7 @@ const { protect, authorize } = require('../middleware/auth');
 // adding kid by Parent
 
 router
-.route('/addKid')
+.route('/addKid/:kidCode')
 .post(protect, authorize('parent'), addKid);
 
 router

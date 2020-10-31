@@ -390,6 +390,7 @@ exports.deleteMeal = asyncHandler(async (req, res, next) => {
     const order = await Order.findById(req.params.id);
     const user = req.user;
     let meal = {};
+    const date = new Date (Date.now());
 
     if(!order) {
         return next(new ErrorResponse(`Order with code ${req.params.id} does not exist.`, 404));
@@ -403,6 +404,13 @@ exports.deleteMeal = asyncHandler(async (req, res, next) => {
 
     if(Object.prototype.toString.call(meal) === '[object Object]' && JSON.stringify(meal) === '{}'){
         return next(new ErrorResponse(`Meal with code ${req.params.mealId} does not exist.`, 404));  
+    }
+
+    let mealDate = new Date (meal.date);
+    mealDate.setDate(mealDate.getDate() - 1);
+
+    if(date >= mealDate) {
+        return next(new ErrorResponse(`You can not delete this meal`, 409));  
     }
     
     if(!order.paid) {

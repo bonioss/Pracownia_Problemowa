@@ -1026,6 +1026,11 @@ components:
                 items:
                   type: string
                   enum: ['breakfast', 'lunch', 'soup', 'main dish', 'dinner', 'tea time']
+        comments:
+          type: string
+        holidays: 
+          type: boolean
+          default: false             
     Orders1:
       type: object
       properties:

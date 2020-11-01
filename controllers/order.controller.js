@@ -4,6 +4,7 @@ const ErrorResponse = require('../utils/ErrorResponse');
 const User = require('../models/User.model');
 const Kid = require('../models/Kid.model');
 const Agency = require('../models/Agency.model');
+const Holidays = require("date-holidays");
 
 const getType = (type) => {
     let price=0;
@@ -31,14 +32,15 @@ const getDate = (date, day) => {
 // @route   POST /api/v1/orders/:kidCode
 // @access  Private
 exports.createOrder = asyncHandler(async (req, res, next) => {
+    const hd = new Holidays('PL');
     const user = req.user;
-    let { startDate, orders, comments } = req.body;
-    console.log(orders);
+    let { startDate, orders, comments, holidays } = req.body;
     startDate = new Date(startDate);
     let meals = [];
     let endDate = new Date(startDate);
     const kid = await Kid.findOne({kidCode: req.params.kidCode});
     const agency = await Agency.findOne({agencyCode: user.agencyCode});
+
     //check if date is proper
     if(startDate <= new Date (Date.now())) {
         return next (new ErrorResponse(`Please provide date later than today`, 409));
@@ -78,6 +80,11 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
     }
 
     if(agency.ordersPeriod==='day') {
+        if(!holidays) {
+            if(hd.isHoliday(startDate).type === 'public') {
+                return next (new ErrorResponse(`Choosen data is a public holiday`, 409));  
+            }
+        }
         for (const o of orders) {
             for (const t of o.types) {
                 let price = getType(t);
@@ -117,8 +124,9 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
 
     for (const o of orders) {
         let date = getDate(startDate, o.day);
-        console.log(`dzien: ${o.day}`);
-        console.log(`data: ${date}`);
+        if(!holidays) {
+            if(hd.isHoliday(date).type === 'public') continue;
+        }
         for (const t of o.types) {
             let price = getType(t);
             meals.push({
@@ -160,7 +168,14 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
             for (const t of o.types) {
                 let price = getType(t);
                 date = getDate(startDate, o.day);
+
                 while(date <= endDate) {
+                    if(!holidays) {
+                        if(hd.isHoliday(date).type === 'public') {
+                            date.setDate(date.getDate()+7);
+                            continue;
+                        }
+                    }
                     let meal = {
                         date: new Date(date),
                         type: t,

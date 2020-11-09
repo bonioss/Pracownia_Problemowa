@@ -460,7 +460,7 @@ exports.deleteMeal = asyncHandler(async (req, res, next) => {
     })
 });
 
-// @desc    Create order for choosen kid
+// @desc    Check order's price for choosen kid
 // @route   post /api/v1/orders/summary/:kidCode
 // @access  Private
 exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
@@ -608,7 +608,7 @@ exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
             finalPrice += m.price;
         }
         if(user.wallet > 0) finalPrice -= user.wallet
-        console.log(meals);
+
         res.status(200).json({
             success: true,
             data: finalPrice

@@ -39,6 +39,6 @@ router
 
 router
     .route('/summary/:kidCode')
-    .post(protect, authorize('agency', 'parent'), getPriceForOrder)   
+    .post(protect, authorize('agency', 'parent'), getPriceForOrder);   
     
 module.exports = router;

@@ -5,7 +5,7 @@ const User = require('../models/User.model');
 const ErrorResponse = require('../utils/ErrorResponse');
 
 // @desc    Get my agencies
-// @route   GET /api/v1/agencies/myAgencies?page=${page}&limit=${limit}
+// @route   GET /api/v1/agencies?page=${page}&limit=${limit}
 // @access  Private, admin
 exports.getMyAgencies = asyncHandler(async (req, res, next) => {
     const page = parseInt(req.query.page)

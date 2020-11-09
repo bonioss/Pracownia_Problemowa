@@ -190,6 +190,92 @@ paths:
                 properties:
                   success:
                     type: boolean
+  /kid/agencyGetKids?page=${page}&limit=${limit}:
+    get:
+      summary: Get list of kids, private route for Agency
+      tags:
+        - Kid
+      parameters:
+      - in: query
+        name: page
+        schema:
+          type: integer
+        description: The number of choosen page
+      - in: query
+        name: limit
+        schema:
+          type: integer
+        description: The number of items     
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Kid1'
+                  - $ref: '#/components/schemas/Kid1'
+                  - $ref: '#/components/schemas/Kid1' 
+                  - $ref: '#/components/schemas/Kid1' 
+        '403':
+          description: Role is not authorized to access this route
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string         
+  /kid/{kidCode}:
+    delete:
+      summary: Delete kid by kidCode, private route for Agency
+      tags:
+      - Kid
+      parameters:
+      - in: path
+        name: kidCode
+        schema:
+          type: string
+        description: Choosen Kid code    
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean 
+        '404':
+          description: Kid with code {kidCode} not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string
+        '401':
+          description: Kid with code {kidCode} does not belong to your's agency
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string
+      
+
   /parent/addKid:
     post:
       summary: Add kid to parent, private route for Parent
@@ -819,8 +905,130 @@ paths:
                     default: false
                   error:
                     type: string  
+  /meal/addMeal:
+    post:
+      summary: Add meal, private route for Admin
+      tags: 
+      - Meal
+      requestBody:
+        required: true
+        description: A JSON object that contains info about meal.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Meal'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+  /meal/myMeals?date=${date}&page=${page}&limit=${limit}:
+    get:
+      summary: Get meals by day private route for Admin
+      tags:
+        - Meal
+      parameters:
+      - in: query
+        name: date
+        schema:
+          type: date
+        description: Date when meal is served
+      - in: query
+        name: page
+        schema:
+          type: integer
+        description: The number of choosen page
+      - in: query
+        name: limit
+        schema:
+          type: integer
+        description: The number of items     
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Meal'
+                  - $ref: '#/components/schemas/Meal'
+                  - $ref: '#/components/schemas/Meal' 
+                  - $ref: '#/components/schemas/Meal' 
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string
+
+  /meal/:id:
+    delete:
+      summary: Delete meal by id, private route for Admin
+      tags:
+      - Meal
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        description: Choosen Meal _id    
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean 
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string
+
 components:
   schemas:
+    Meal:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            type: 
+              type: string
+              enum:
+              - 'breakfast'
+              - 'lunch'
+              - 'soup'  
+              - 'main dish' 
+              - 'dinner'
+              - 'teatime'         
+            description:
+              type: string
+            date:
+              type: date
+            price:
+              type: number 
     Login:
       type: object
       properties:
@@ -941,7 +1149,45 @@ components:
         page:
           type: number
         limit:
-          type: number      
+          type: number    
+
+    Kid1:
+      type: object
+      properties:
+        success: 
+          type: boolean
+        data:
+          type: object
+          properties:
+            next:
+              type: object 
+              properties:
+                page:
+                  type: number
+                limit:
+                  type: number 
+            prev:
+              type: object 
+              properties:
+                page:
+                  type: number
+                limit:
+                  type: number    
+            numberOfPages:
+              type: number                                                                   
+            results:
+              type: array
+              items:
+                type: object
+                properties:
+                  firstName:
+                    type: string
+                  name:
+                    lastName: string
+                  agencyCode:
+                    string: string
+                  kidCode:
+                    type: string        
     Agencies1:
       type: object
       properties:

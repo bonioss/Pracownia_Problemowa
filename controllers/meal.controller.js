@@ -72,7 +72,20 @@ exports.myMeals = asyncHandler(async (req, res, next) => {
 
 
 // @desc    Delete meal 
-// @route   DELETE /api/v1/meal/deleteMeal
+// @route   DELETE /api/v1/meal/:id
 // @access  Private, admin
 
-// missing
+exports.deleteMeal = asyncHandler(async (req, res, next) => {
+  Meal.findByIdAndRemove(req.params.id, function(err, docs){
+    if (err){
+      res.status(500).json({
+        success: false,
+        error: err.message
+      })
+    }else{
+      res.status(200).json({
+        success: true,
+    });
+    }
+  })
+});

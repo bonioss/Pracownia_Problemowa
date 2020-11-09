@@ -17,8 +17,8 @@ router
 
 // delete meal
 
-// router
-// .route('/deleteMeal')
-// .post(protect, authorize('admin'), deleteMeal);
+router
+.route('/:id')
+.delete(protect, authorize('admin'), deleteMeal);
 
 module.exports = router;

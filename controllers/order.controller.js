@@ -608,7 +608,7 @@ exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
             finalPrice += m.price;
         }
         if(user.wallet > 0) finalPrice -= user.wallet
-        console.log(meals);
+        
         res.status(200).json({
             success: true,
             data: finalPrice

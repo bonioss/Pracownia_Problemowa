@@ -13,7 +13,7 @@ const getType = (type) => {
     else if(type==='soup') price = 5;
     else if(type==='main dish') price = 12;
     else if(type==='dinner') price = 15;
-    else if(type==='tea') price = 10;
+    else if(type==='tea time') price = 10;
     return price;
 }
 
@@ -329,7 +329,6 @@ exports.getOrderById = asyncHandler(async(req, res, next) => {
     const results = {};
     let order = await Order.findById({_id: req.params.id});
     
-    // console.log(count);
     if(!order) {
         return next(new ErrorResponse(`Order with code ${req.params.id} has not exist.`, 404))
     }
@@ -429,7 +428,6 @@ exports.deleteMeal = asyncHandler(async (req, res, next) => {
     }
     
     if(!order.paid) {
-        // console.log(meal.price);
         let newPrice = order.price - meal.price;
         await order.meals.pull(req.params.mealId);
         await Order.updateOne({_id: req.params.id}, {price: newPrice, meals: order.meals});
@@ -460,4 +458,160 @@ exports.deleteMeal = asyncHandler(async (req, res, next) => {
     res.status(200).json({
         success: true,
     })
-})
+});
+
+// @desc    Create order for choosen kid
+// @route   post /api/v1/orders/summary/:kidCode
+// @access  Private
+exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
+    const hd = new Holidays('PL');
+    const user = req.user;
+    let { startDate, orders, comments, holidays } = req.body;
+    startDate = new Date(startDate);
+    let meals = [];
+    let endDate = new Date(startDate);
+    const kid = await Kid.findOne({kidCode: req.params.kidCode});
+    const agency = await Agency.findOne({agencyCode: user.agencyCode});
+
+    //check if date is proper
+    if(startDate <= new Date (Date.now())) {
+        return next (new ErrorResponse(`Please provide date later than today`, 409));
+    }
+
+    //check if kid exist
+    if(!kid) {
+        return next (new ErrorResponse(`Kid with code ${req.params.kidCode} not found`, 404));
+    }
+
+    //check if agency or parent has choosen kid
+    if(user.role === 'agency') {
+      const kids = await Kid.find({agencyCode: user.agencyCode});
+      let hasKid=false;
+      for(const k of kids) {
+          if(k.agencyCode===kid.agencyCode) {
+            hasKid = true;
+            break;
+          }
+      }
+      if(!hasKid) {
+        return next (new ErrorResponse(`Kid with code ${req.params.kidCode} not found`, 404));
+      }
+    } else if(user.role==='parent') {
+        const parent = await User.findOne({email: user.email});
+        if(!parent.kids.includes(kid.id)) {
+            return next (new ErrorResponse(`Kid with code ${req.params.kidCode} not found`, 404));
+        }
+    }
+
+    //check if order can start on choosen date
+    const kidOrders = await Order.find({kidCode: req.params.kidCode});
+    for (const o of kidOrders) {
+        if(startDate <= o.endDate) {
+            return next (new ErrorResponse(`Your previous order has not finished`, 409));
+        }
+    }
+
+    if(agency.ordersPeriod==='day') {
+        if(!holidays) {
+            if(hd.isHoliday(startDate).type === 'public') {
+                return next (new ErrorResponse(`Choosen data is a public holiday`, 409));  
+            }
+        }
+        for (const o of orders) {
+            for (const t of o.types) {
+                let price = getType(t);
+                meals.push({
+                    date: startDate,
+                    type: t,
+                    price
+                })
+            }
+        }
+        if(meals.length===0) {
+            return next (new ErrorResponse(`Please provide some meal`, 409)); 
+        }
+        let finalPrice = 0;
+        for(m of meals) {
+            finalPrice += m.price;
+        }
+        if(user.wallet > 0) finalPrice -= user.wallet
+
+        res.status(200).json({
+            success: true,
+            data: finalPrice
+        });
+    }
+    else if(agency.ordersPeriod === 'week') {
+    
+    endDate.setDate(endDate.getDate() + 7);
+
+    for (const o of orders) {
+        let date = getDate(startDate, o.day);
+        if(!holidays) {
+            if(hd.isHoliday(date).type === 'public') continue;
+        }
+        for (const t of o.types) {
+            let price = getType(t);
+            meals.push({
+                date,
+                type: t,
+                price
+            })
+        }
+    }
+    if(meals.length===0) {
+        return next (new ErrorResponse(`Please provide some meal`, 409)); 
+    }
+    let finalPrice = 0;
+    for(m of meals) {
+        finalPrice += m.price;
+    }
+    if(user.wallet > 0) finalPrice -= user.wallet
+
+    res.status(200).json({
+        success: true,
+        data: finalPrice
+    });
+    }
+    if(agency.ordersPeriod === 'month' || agency.ordersPeriod ==='semestr') {
+        if(agency.ordersPeriod ==='month') endDate.setDate(endDate.getDate() + 30);
+        else if(agency.ordersPeriod ==='semestr' && startDate>agency.winterTermEnd) endDate = agency.summerTermEnd;
+        else endDate = agency.winterTermEnd;
+        for (const o of orders) {      
+            let date = new Date(startDate);
+            for (const t of o.types) {
+                let price = getType(t);
+                date = getDate(startDate, o.day);
+
+                while(date <= endDate) {
+                    if(!holidays) {
+                        if(hd.isHoliday(date).type === 'public') {
+                            date.setDate(date.getDate()+7);
+                            continue;
+                        }
+                    }
+                    let meal = {
+                        date: new Date(date),
+                        type: t,
+                        price
+                    }
+                    meals.push(meal);
+                    date.setDate(date.getDate()+7);
+                }
+            }
+        }
+        if(meals.length===0) {
+            return next (new ErrorResponse(`Please provide some meal`, 409)); 
+        }
+        let finalPrice = 0;
+        for(m of meals) {
+            finalPrice += m.price;
+        }
+        if(user.wallet > 0) finalPrice -= user.wallet
+        console.log(meals);
+        res.status(200).json({
+            success: true,
+            data: finalPrice
+        });
+    }
+});

@@ -9,11 +9,14 @@ interface MealsParams {
 export type MealType = 'breakfast' | 'lunch' | 'soup' | 'main dish' | 'dinner' | 'teatime';
 export const MEAL_TYPES = ['breakfast', 'lunch', 'soup', 'main dish', 'dinner', 'teatime'] as const;
 export interface Meal {
+  _id: string;
   type: MealType;
   description: string;
   date: Date;
   price: number;
 }
+
+export type NewMeal = Omit<Meal, '_id'>;
 
 export const useMeals = (param: FetchParams & MealsParams) => (
   usePaginatedQuery(['meals', param], (params: FetchParams) => (
@@ -22,5 +25,9 @@ export const useMeals = (param: FetchParams & MealsParams) => (
 );
 
 export const useAddMeal = () => useMutation(
-  (data: Meal) => api.post<ApiResponse>('/meal/addMeal', data).then(res => res.data),
+  (data: NewMeal) => api.post<ApiResponse>('/meal/addMeal', data).then(res => res.data),
+);
+
+export const useDeleteMeal = () => useMutation(
+  (mealId: string) => api.delete<ApiResponse>(`/meal/${mealId}`).then(res => res.data),
 );

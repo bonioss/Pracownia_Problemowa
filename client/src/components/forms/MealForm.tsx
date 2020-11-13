@@ -7,7 +7,7 @@ import * as z from 'zod';
 import Alert from '@material-ui/lab/Alert';
 import { mealLabelAndIcon } from 'utils/mappers';
 import { Controller } from 'react-hook-form';
-import { Meal, MEAL_TYPES } from 'api/meal';
+import { MEAL_TYPES, NewMeal } from 'api/meal';
 import { DatePicker } from '@material-ui/pickers';
 
 // #region styles
@@ -39,7 +39,7 @@ export const schema = z.object({
   type: z.enum([...MEAL_TYPES]),
 });
 
-export const MealForm: FC<FormProps<Meal> & Stylable> = ({
+export const MealForm: FC<FormProps<NewMeal> & Stylable> = ({
   onSubmit, error, form, ...props
 }) => {
   const {

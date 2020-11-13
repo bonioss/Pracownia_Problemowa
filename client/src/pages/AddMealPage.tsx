@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { errorHandler } from 'utils/errorHandler';
 import { useHistory } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Meal, useAddMeal } from 'api/meal';
+import { NewMeal, useAddMeal } from 'api/meal';
 import { MealForm, schema } from 'components/forms/MealForm';
 import { startOfDay } from 'date-fns';
 
@@ -13,7 +13,7 @@ import { startOfDay } from 'date-fns';
 // #endregion
 
 export const AddMealPage = () => {
-  const form = useForm<Meal>({
+  const form = useForm<NewMeal>({
     defaultValues: {
       date: startOfDay(new Date()),
       description: '',
@@ -26,7 +26,7 @@ export const AddMealPage = () => {
   const [addMeal] = useAddMeal();
   const history = useHistory();
 
-  const handleAddMeal = async (data: Meal) => {
+  const handleAddMeal = async (data: NewMeal) => {
     await addMeal(data, {
       onSuccess: () => {
         history.push('/jadlospis');

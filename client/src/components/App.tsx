@@ -23,6 +23,7 @@ import DateFnsUtils from '@material-ui/pickers/adapter/date-fns';
 import { MenuPage } from 'pages/MenuPage';
 import { pl } from 'date-fns/locale';
 import { AddMealPage } from 'pages/AddMealPage';
+import { PlaceOrderPage } from 'pages/PlaceOrderPage';
 import { DrawerItem } from './DrawerItem';
 import { AdminDrawer } from './AdminDrawer';
 import { AgencyDrawer } from './AgencyDrawer';
@@ -93,6 +94,7 @@ const App = () => {
                   <GuardedRoute path="/placowki" component={AgenciesPage} roles={['admin']} />
                   <GuardedRoute path="/jadlospis/nowe-danie" component={AddMealPage} roles={['admin']} />
                   <Route path="/jadlospis" component={MenuPage} />
+                  <GuardedRoute path="/zamowienia/nowe" component={PlaceOrderPage} roles={['agency', 'parent']} />
                   <Route component={EmptyPage} />
                 </Switch>
               </Root>

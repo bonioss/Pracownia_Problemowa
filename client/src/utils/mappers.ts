@@ -26,7 +26,7 @@ export const mealLabelAndIcon = (mealType: MealType) => {
     case 'lunch': return { Icon: FoodCroissant, label: 'Drugie śniadanie' };
     case 'main dish': return { Icon: Pasta, label: 'Danie główne' };
     case 'soup': return { Icon: Noodles, label: 'Zupa' };
-    case 'teatime': return { Icon: Tea, label: 'Podwieczorek' };
+    case 'tea time': return { Icon: Tea, label: 'Podwieczorek' };
 
     default: {
       const _exhaustiveCheck: never = mealType;

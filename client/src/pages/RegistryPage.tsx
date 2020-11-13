@@ -7,6 +7,7 @@ import { ReactComponent as PracowniaPosilkow } from 'assets/pracownia_posilkow.s
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { errorHandler } from 'utils/errorHandler';
+import { useHistory } from 'react-router-dom';
 
 // #region styles
 const Container = styled('div')({
@@ -39,6 +40,7 @@ const AppLogo = styled(PracowniaPosilkow)({
 export const RegisterPage = () => {
   const [register] = useRegister();
   const [formError, setError] = useState('');
+  const history = useHistory();
   const form = useForm<RegisterParams>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -53,23 +55,17 @@ export const RegisterPage = () => {
 
   const handleRegister = async (data: RegisterParams) => {
     await register(data, {
-      onSuccess: res => {
+      onSuccess: () => {
         form.reset();
-        // zrobic tak jak w addAgency?
+        history.push('/logowanie');
       },
       onError: err => {
         setError(errorHandler(err, message => {
           switch (message) {
-            case 'Hasło jest wymagane':
-              return 'Hasło jest wymagane';
-            case 'Hasła się nie zgadzają':
-              return 'Hasła się nie zgadzają';
-            case 'Imię jest wymagane':
-              return 'Imie jest wymagane';
-            case 'Nazwisko jest wymagane':
-              return 'Nazwisko jest wymagane';
-            case 'Kod jest wymagany':
-              return 'Kod jest wymagany';
+            case 'E-mail already exists':
+              return 'Konto z takim adresem e-mail już istnieje';
+            case 'Invalid agency code':
+              return 'Nieprawidłowy kod placówki';
             default:
               return 'Wystąpił nieznany błąd, spróbuj ponownie.';
           }

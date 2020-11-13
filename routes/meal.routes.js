@@ -7,7 +7,7 @@ const { protect, authorize } = require('../middleware/auth');
 
 router
 .route('/myMeals')
-.get(protect, authorize('admin'), myMeals);
+.get(protect, myMeals);
 
 // add meal
 

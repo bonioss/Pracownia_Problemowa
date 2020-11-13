@@ -972,7 +972,7 @@ paths:
                   error:
                     type: string
 
-  /meal/:id:
+  /meal/{id}:
     delete:
       summary: Delete meal by id, private route for Admin
       tags:
@@ -1011,24 +1011,23 @@ components:
     Meal:
       type: object
       properties:
-        data:
-          type: object
-          properties:
-            type: 
-              type: string
-              enum:
-              - 'breakfast'
-              - 'lunch'
-              - 'soup'  
-              - 'main dish' 
-              - 'dinner'
-              - 'teatime'         
-            description:
-              type: string
-            date:
-              type: date
-            price:
-              type: number 
+        type: 
+          type: string
+          enum:
+          - 'breakfast'
+          - 'lunch'
+          - 'soup'  
+          - 'main dish' 
+          - 'dinner'
+          - 'teatime'         
+        description:
+          type: string
+        date:
+          type: string
+          format: date
+          example: "2021-01-30"
+        price:
+          type: number 
     Login:
       type: object
       properties:

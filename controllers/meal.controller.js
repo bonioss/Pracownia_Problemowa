@@ -37,7 +37,11 @@ exports.myMeals = asyncHandler(async (req, res, next) => {
     const endIndex = page * limit
 
     const results = {}
-    const count = await Meal.countDocuments().exec()
+    let startDate = new Date(req.query.date);
+    let finishDate = new Date(req.query.date);
+    finishDate.setDate(finishDate.getDate() + 1);
+    console.log(startDate);
+    const count = await Meal.countDocuments({"date": {"$gte":startDate, "$lt": finishDate}}).exec()
     if (endIndex < count) {
       results.next = {
         page: page + 1,
@@ -54,7 +58,8 @@ exports.myMeals = asyncHandler(async (req, res, next) => {
     
     results.numberOfPages = Math.ceil(count / limit);
     try {
-      results.results = await Meal.find({date: req.query.date}).limit(limit).skip(startIndex).select('-_id -__v').exec()
+      console.log();
+      results.results = await Meal.find({"date": {"$gte":startDate, "$lt": finishDate}}).limit(limit).skip(startIndex).select(' -__v').exec()
       res.paginatedResults = results
       next()
     } catch (e) {

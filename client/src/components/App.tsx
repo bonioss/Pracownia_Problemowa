@@ -13,6 +13,7 @@ import { darkTheme, lightTheme } from 'theme';
 import LogoutIcon from '@material-ui/icons/ExitToApp';
 import { LogoutPage } from 'pages/LogoutPage';
 import { LoginPage } from 'pages/LoginPage';
+import { RegisterPage } from 'pages/RegistryPage';
 import { EmptyPage } from 'pages/EmptyPage';
 import { AgenciesPage } from 'pages/AgenciesPage';
 import { AddAgencyPage } from 'pages/AddAgencyPage';
@@ -105,6 +106,7 @@ const App = () => {
             <ThemeProvider theme={darkTheme}>
               <Switch>
                 <Route path="/logowanie"><LoginPage /></Route>
+                <Route path="/rejestracja"><RegisterPage /></Route>
                 <Route><Redirect to="/logowanie" /></Route>
               </Switch>
             </ThemeProvider>

@@ -1,14 +1,16 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable react/no-array-index-key */
 import {
   Button,
-  ListItem, ListItemIcon, ListItemText,
+  IconButton,
+  ListItem, ListItemIcon, ListItemSecondaryAction, ListItemText,
   Paper, styled, TextField,
 } from '@material-ui/core';
 import { PageWrapper } from 'components/PageWrapper';
 import React, { useState } from 'react';
 import { DatePicker } from '@material-ui/pickers';
 import { format } from 'utils/dateFns';
-import { useMeals } from 'api/meal';
+import { Meal, useDeleteMeal, useMeals } from 'api/meal';
 import { mealLabelAndIcon } from 'utils/mappers';
 import { GenericList } from 'components/GenericList';
 import { GenericListHeader } from 'components/GenericListHeader';
@@ -16,6 +18,8 @@ import { startOfDay } from 'date-fns';
 import AddIcon from '@material-ui/icons/Add';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from 'utils/authState';
+import DeleteIcon from '@material-ui/icons/Delete';
+import { ConfirmDialog } from 'components/ConfirmDialog';
 
 // #region styles
 const Actions = styled(Paper)(({ theme }) => ({
@@ -51,6 +55,27 @@ export const MenuPage = () => {
   const meals = useMeals({ date: selectedDate });
   const history = useHistory();
   const { user } = useAuth();
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [mealToDelete, setMealToDelete] = useState<Meal>();
+  const [deleteMeal] = useDeleteMeal();
+
+  const handleDelete = async () => {
+    if (mealToDelete) {
+      await deleteMeal(mealToDelete._id, {
+        onSuccess: () => {
+          // alert('Usunięto posiłek');
+        },
+        // onError: err => {
+        //   setError(errorHandler(err, message => {
+        //     switch (message) {
+        //       default:
+        //         return 'Wystąpił nieznany błąd, spróbuj ponownie.';
+        //     }
+        //   }));
+        // },
+      });
+    }
+  };
 
   return (
     <PageWrapper title="Jadłospis">
@@ -85,27 +110,34 @@ export const MenuPage = () => {
           <MealsListHeader title={format(selectedDate, 'PPPP')} />
         )}
         items={
-          (meals.resolvedData?.results || []).map(({ description, type }, i) => {
-            const { label, Icon } = mealLabelAndIcon(type);
+          (meals.resolvedData?.results || []).map((meal, i) => {
+            const { label, Icon } = mealLabelAndIcon(meal.type);
 
             return user?.role === 'admin' ? (
-              <ListItem
-                style={{ padding: '8px 32px' }}
-                button
-                onClick={() => history.push('/jadlospis/fosrnfjsnrf')}
-                key={i}
-              >
+              <ListItem style={{ padding: '8px 32px' }} key={i}>
                 <ListItemIcon>
                   <Icon />
                 </ListItemIcon>
-                <ListItemText primary={description} secondary={label} />
+                <ListItemText primary={meal.description} secondary={label} />
+                <ListItemSecondaryAction>
+                  <IconButton
+                    edge="end"
+                    aria-label="delete"
+                    onClick={() => {
+                      setDeleteDialogOpen(true);
+                      setMealToDelete(meal);
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </ListItemSecondaryAction>
               </ListItem>
             ) : (
-              <ListItem style={{ padding: '8px 32px' }}>
+              <ListItem style={{ padding: '8px 32px' }} key={i}>
                 <ListItemIcon>
                   <Icon />
                 </ListItemIcon>
-                <ListItemText primary={description} secondary={label} />
+                <ListItemText primary={meal.description} secondary={label} />
               </ListItem>
             );
           })
@@ -118,6 +150,15 @@ export const MenuPage = () => {
         }}
         emptyText="Brak posiłków"
       />
+
+      <ConfirmDialog
+        isOpen={isDeleteDialogOpen}
+        setClose={() => setDeleteDialogOpen(false)}
+        onConfirm={handleDelete}
+        title="Usuwanie placówki"
+      >
+        Czy na pewno chcesz usunąć ten posiłek?
+      </ConfirmDialog>
     </PageWrapper>
   );
 };

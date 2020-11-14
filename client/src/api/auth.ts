@@ -9,6 +9,15 @@ export interface LoginParams {
   password: string;
 }
 
+export interface RegisterParams {
+  email: string;
+  firstName: string;
+  lastName: string;
+  password: string;
+  passwordConfirm: string;
+  agencyCode: string;
+}
+
 export interface AdminUser {
   agencyCode: string;
   email: string;
@@ -49,6 +58,10 @@ export interface NewAgency {
 
 export const useLogin = () => useMutation(
   (data: LoginParams) => api.post<ApiResponse<User>>('/auth/login', data).then(res => res.data),
+);
+
+export const useRegister = () => useMutation(
+  (data: RegisterParams) => api.post<ApiResponse<User>>('/auth/register', data).then(res => res.data),
 );
 
 export const useAddAgency = () => useMutation(

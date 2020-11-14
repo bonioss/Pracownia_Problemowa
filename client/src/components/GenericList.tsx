@@ -1,6 +1,6 @@
 import {
   LinearProgress,
-  List, Paper, styled, withStyles,
+  List, Paper, styled, Typography, withStyles,
 } from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
 import React, { ChangeEvent, FC, ReactNode } from 'react';
@@ -23,6 +23,13 @@ const StyledPagination = withStyles({
     padding: 16,
   },
 })(Pagination);
+
+const EmptyContainer = styled('div')({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  minHeight: 300,
+});
 // #endregion
 
 interface Props {
@@ -35,16 +42,23 @@ interface Props {
   };
   title?: string;
   loading?: boolean;
+  emptyText?: string;
 }
 
 export const GenericList: FC<Props & Stylable> = ({
-  items, header, pagination, title, loading, ...props
+  items, header, pagination, title, loading, emptyText, ...props
 }) => (
   <Paper {...props}>
     <StyledList>
       {header || (title && <GenericListHeader title={title} />)}
+
       {loading && <LinearProgress />}
-      {items}
+
+      {(Array.isArray(items) && items.length === 0) ? (
+        <EmptyContainer>
+          <Typography>{emptyText || 'Brak wyników'}</Typography>
+        </EmptyContainer>
+      ) : items}
     </StyledList>
 
     {pagination && (

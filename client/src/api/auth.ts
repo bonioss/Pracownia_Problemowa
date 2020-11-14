@@ -65,5 +65,5 @@ export const useRegister = () => useMutation(
 );
 
 export const useAddAgency = () => useMutation(
-  (data: NewAgency) => api.post<ApiResponse>('/auth/addAgency', data).then(res => res.data),
+  (data: NewAgency) => api.post<ApiResponse<AgencyUser>>('/auth/addAgency', data).then(res => res.data),
 );

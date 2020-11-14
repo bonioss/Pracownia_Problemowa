@@ -8,6 +8,7 @@ export const Content = styled(getContent(styled))(({ theme }) => ({
   height: 'calc(100% - 64px)',
   display: 'flex',
   flexDirection: 'column',
+  overflowY: 'auto',
 }));
 
 export const AppToolbar = styled(Toolbar)(({ theme }) => ({

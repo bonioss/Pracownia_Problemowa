@@ -19,6 +19,11 @@ import { AgenciesPage } from 'pages/AgenciesPage';
 import { AddAgencyPage } from 'pages/AddAgencyPage';
 import { AgencyPage } from 'pages/AgencyPage';
 import { ReactQueryConfig, ReactQueryConfigProvider } from 'react-query';
+import LocalizationProvider from '@material-ui/pickers/LocalizationProvider';
+import DateFnsUtils from '@material-ui/pickers/adapter/date-fns';
+import { MenuPage } from 'pages/MenuPage';
+import { pl } from 'date-fns/locale';
+import { AddMealPage } from 'pages/AddMealPage';
 import { DrawerItem } from './DrawerItem';
 import { AdminDrawer } from './AdminDrawer';
 import { AgencyDrawer } from './AgencyDrawer';
@@ -56,53 +61,57 @@ const App = () => {
 
   return (
     <ReactQueryConfigProvider config={reactQueryConfig}>
-      <Container>
-        <CssBaseline />
-        <BrowserRouter>
-          {user && (
-          <ThemeProvider theme={lightTheme}>
-            <Root scheme={layout} theme={lightTheme}>
-              <DrawerSidebar sidebarId="primarySidebar">
-                <SidebarContent>
-                  <DrawerLogo />
+      <LocalizationProvider dateAdapter={DateFnsUtils} locale={pl}>
+        <Container>
+          <CssBaseline />
+          <BrowserRouter>
+            {user && (
+            <ThemeProvider theme={lightTheme}>
+              <Root scheme={layout} theme={lightTheme}>
+                <DrawerSidebar sidebarId="primarySidebar">
+                  <SidebarContent>
+                    <DrawerLogo />
 
-                  {user.role === 'admin' && <AdminDrawer user={user} />}
-                  {user.role === 'agency' && <AgencyDrawer user={user} />}
-                  {user.role === 'parent' && <ParentDrawer user={user} />}
+                    {user.role === 'admin' && <AdminDrawer user={user} />}
+                    {user.role === 'agency' && <AgencyDrawer user={user} />}
+                    {user.role === 'parent' && <ParentDrawer user={user} />}
 
-                  <div style={{ flex: 1 }} />
+                    <div style={{ flex: 1 }} />
 
-                  <Divider />
+                    <Divider />
 
-                  <List component="nav">
-                    <DrawerItem name="Wyloguj" icon={LogoutIcon} to="/wyloguj" />
-                  </List>
-                </SidebarContent>
-              </DrawerSidebar>
+                    <List component="nav">
+                      <DrawerItem name="Wyloguj" icon={LogoutIcon} to="/wyloguj" />
+                    </List>
+                  </SidebarContent>
+                </DrawerSidebar>
 
+                <Switch>
+                  <Route path={['/logowanie', '/rejestracja']}><Redirect to="/" /></Route>
+                  <Route path="/wyloguj" component={LogoutPage} />
+                  <GuardedRoute path="/placowki/nowa" component={AddAgencyPage} roles={['admin']} />
+                  <GuardedRoute path="/placowki/:code" component={AgencyPage} roles={['admin']} />
+                  <GuardedRoute path="/placowki" component={AgenciesPage} roles={['admin']} />
+                  <GuardedRoute path="/jadlospis/nowe-danie" component={AddMealPage} roles={['admin']} />
+                  <Route path="/jadlospis" component={MenuPage} />
+                  <Route component={EmptyPage} />
+                </Switch>
+              </Root>
+            </ThemeProvider>
+            )}
+
+            {!user && (
+            <ThemeProvider theme={darkTheme}>
               <Switch>
-                <Route path={['/logowanie', '/rejestracja']}><Redirect to="/" /></Route>
-                <Route path="/wyloguj" component={LogoutPage} />
-                <GuardedRoute path="/placowki/nowa" component={AddAgencyPage} roles={['admin']} />
-                <GuardedRoute path="/placowki/:code" component={AgencyPage} roles={['admin']} />
-                <GuardedRoute path="/placowki" component={AgenciesPage} roles={['admin']} />
-                <Route component={EmptyPage} />
+                <Route path="/logowanie"><LoginPage /></Route>
+                <Route path="/rejestracja"><RegisterPage /></Route>
+                <Route><Redirect to="/logowanie" /></Route>
               </Switch>
-            </Root>
-          </ThemeProvider>
-          )}
-
-          {!user && (
-          <ThemeProvider theme={darkTheme}>
-            <Switch>
-              <Route path="/logowanie"><LoginPage /></Route>
-              <Route path="/rejestracja"><RegisterPage /></Route>
-              <Route><Redirect to="/logowanie" /></Route>
-            </Switch>
-          </ThemeProvider>
-          )}
-        </BrowserRouter>
-      </Container>
+            </ThemeProvider>
+            )}
+          </BrowserRouter>
+        </Container>
+      </LocalizationProvider>
     </ReactQueryConfigProvider>
   );
 };

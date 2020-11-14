@@ -10,7 +10,7 @@ const Kid = require('../models/Kid.model');
 
 exports.addKid = asyncHandler(async (req, res, next) => {
 
-    const {kidCode} = req.body;
+    const kidCode = req.params.kidCode;
     const kid = await Kid.findOne({ kidCode: kidCode });
     //check if kid identified by code exist
     if(!kid) {
@@ -55,5 +55,32 @@ exports.getMyKids = asyncHandler(async (req, res, next) => {
   res.status(200).json({
     success: true,
     data: kids
+  });
+});
+
+
+// @desc    Delete kid by kidCode
+// @route   DELETE /api/v1/parent/:kidCode
+// @access  Private, parent
+
+exports.deleteKid = asyncHandler(async (req, res, next) => {
+  let kid = await Kid.findOne({kidCode: req.params.kidCode}); 
+
+  const userEmail = req.user.email;
+  const parent = await User.findOne({ email: userEmail });
+  const parentKids = parent.kids;
+  //check if kid is not already added
+  if (!parentKids.includes(kid.id)){
+    return next(new ErrorResponse(`Kid with code ${req.params.kidCode} not found`, 404))
+  }else{
+    parentKids.pop(kid);
+    parent.update({ kids: parentKids })
+    parent.save();
+  }
+
+  // we assume that parent cannot delete kid from agency, only from it's own account 🤣
+
+  res.status(200).json({
+      success: true,
   });
 });

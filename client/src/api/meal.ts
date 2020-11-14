@@ -1,5 +1,5 @@
 import { api, ApiResponse, PaginatedApiResponse } from 'api';
-import { useMutation, usePaginatedQuery } from 'react-query';
+import { queryCache, useMutation, usePaginatedQuery } from 'react-query';
 import { FetchParams } from './agencies';
 
 interface MealsParams {
@@ -26,8 +26,10 @@ export const useMeals = (param: FetchParams & MealsParams) => (
 
 export const useAddMeal = () => useMutation(
   (data: NewMeal) => api.post<ApiResponse>('/meal/addMeal', data).then(res => res.data),
+  { onSuccess: () => queryCache.invalidateQueries('meals') },
 );
 
 export const useDeleteMeal = () => useMutation(
   (mealId: string) => api.delete<ApiResponse>(`/meal/${mealId}`).then(res => res.data),
+  { onSuccess: () => queryCache.invalidateQueries('meals') },
 );

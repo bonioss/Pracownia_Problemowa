@@ -54,6 +54,12 @@ export interface NewAgency {
   name: string;
   ordersPeriod: OrdersPeriod;
 }
+
+export interface NewKid {
+  firstName: string;
+  lastName: string;
+  agencyCode: string;
+}
 // #endregion
 
 export const useLogin = () => useMutation(
@@ -66,4 +72,8 @@ export const useRegister = () => useMutation(
 
 export const useAddAgency = () => useMutation(
   (data: NewAgency) => api.post<ApiResponse<AgencyUser>>('/auth/addAgency', data).then(res => res.data),
+);
+
+export const useAddKid = () => useMutation(
+  (data: NewKid) => api.post<ApiResponse<AgencyUser>>('/kid/agencyAddKid', data).then(res => res.data),
 );

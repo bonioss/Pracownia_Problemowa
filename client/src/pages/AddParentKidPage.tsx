@@ -1,22 +1,20 @@
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Paper } from '@material-ui/core';
-import { NewKid, useAddKid } from 'api/auth';
-import { AddKidForm, schema } from 'components/forms/AddKidForm';
+import { Parent, useAddKid } from 'api/parent';
 import { PageWrapper } from 'components/PageWrapper';
 import React, { useState } from 'react';
+import { AddParentKidForm, schema } from 'components/forms/AddParentKidForm';
 import { useForm } from 'react-hook-form';
-import { useHistory } from 'react-router-dom';
 import { errorHandler } from 'utils/errorHandler';
+import { useHistory } from 'react-router-dom';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 // #region styles
 // #endregion
 
-export const AddKidPage = () => {
-  const form = useForm<NewKid>({
+export const AddParentKidPage = () => {
+  const form = useForm<Parent>({
     defaultValues: {
-      firstName: '',
-      lastName: '',
-      agencyCode: '',
+      kidCode: '',
     },
     resolver: zodResolver(schema),
   });
@@ -24,10 +22,10 @@ export const AddKidPage = () => {
   const [addKid] = useAddKid();
   const history = useHistory();
 
-  const handleAddKid = async (data: NewKid) => {
+  const handleAddKid = async (data: Parent) => {
     await addKid(data, {
       onSuccess: () => {
-        history.push('/dzieci');
+        history.push('/parent-dzieci');
       },
       onError: err => {
         setFormError(errorHandler(err, message => {
@@ -43,7 +41,7 @@ export const AddKidPage = () => {
   return (
     <PageWrapper title="Dodawanie dziecka">
       <Paper style={{ margin: 16 }}>
-        <AddKidForm form={form} onSubmit={handleAddKid} error={formError} />
+        <AddParentKidForm form={form} onSubmit={handleAddKid} error={formError} />
       </Paper>
     </PageWrapper>
   );

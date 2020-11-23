@@ -6,7 +6,7 @@ import { GenericListHeader } from 'components/GenericListHeader';
 import { KidListItem } from 'components/KidListItem';
 import { PageWrapper } from 'components/PageWrapper';
 import React, { useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { errorHandler } from 'utils/errorHandler';
 
 // #region styles
@@ -23,7 +23,6 @@ interface KidPageParams {
 }
 
 export const KidsPage = () => {
-  const { code } = useParams<KidPageParams>();
   const history = useHistory();
   const [page, setPage] = useState(1);
   const kids = useKids({ limit: 10, page });
@@ -64,7 +63,6 @@ export const KidsPage = () => {
             }
           };
           return (
-            // KidListItem() // nwm w sumie czy to dobrze ogarnalem
             <KidListItem
               data={kidGet}
               handleDelete={handleDeleteKid}

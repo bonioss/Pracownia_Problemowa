@@ -1,36 +1,38 @@
 import {
   CssBaseline, Divider, List, styled, ThemeProvider,
 } from '@material-ui/core';
-import React from 'react';
-import {
-  Switch, BrowserRouter, Route, Redirect,
-} from 'react-router-dom';
-import { useAuth } from 'utils/authState';
-import { Root, getDrawerSidebar, getSidebarContent } from '@mui-treasury/layout';
-import layout from 'utils/layout';
-import { ReactComponent as PracowniaPosilkow } from 'assets/pracownia_posilkow.svg';
-import { darkTheme, lightTheme } from 'theme';
 import LogoutIcon from '@material-ui/icons/ExitToApp';
-import { LogoutPage } from 'pages/LogoutPage';
-import { LoginPage } from 'pages/LoginPage';
-import { RegisterPage } from 'pages/RegistryPage';
-import { EmptyPage } from 'pages/EmptyPage';
-import { AgenciesPage } from 'pages/AgenciesPage';
-import { AddAgencyPage } from 'pages/AddAgencyPage';
-import { AgencyPage } from 'pages/AgencyPage';
-import { KidsPage } from 'pages/KidsPage';
-import { AddKidPage } from 'pages/AddKidPage';
-import { ReactQueryConfig, ReactQueryConfigProvider } from 'react-query';
-import LocalizationProvider from '@material-ui/pickers/LocalizationProvider';
 import DateFnsUtils from '@material-ui/pickers/adapter/date-fns';
-import { MenuPage } from 'pages/MenuPage';
+import LocalizationProvider from '@material-ui/pickers/LocalizationProvider';
+import { getDrawerSidebar, getSidebarContent, Root } from '@mui-treasury/layout';
+import { ReactComponent as PracowniaPosilkow } from 'assets/pracownia_posilkow.svg';
 import { pl } from 'date-fns/locale';
+import { AddAgencyPage } from 'pages/AddAgencyPage';
+import { AddKidPage } from 'pages/AddKidPage';
 import { AddMealPage } from 'pages/AddMealPage';
-import { DrawerItem } from './DrawerItem';
+import { AddParentKidPage } from 'pages/AddParentKidPage';
+import { AgenciesPage } from 'pages/AgenciesPage';
+import { AgencyPage } from 'pages/AgencyPage';
+import { EmptyPage } from 'pages/EmptyPage';
+import { KidsPage } from 'pages/KidsPage';
+import { LoginPage } from 'pages/LoginPage';
+import { LogoutPage } from 'pages/LogoutPage';
+import { MenuPage } from 'pages/MenuPage';
+import { ParentKidsPage } from 'pages/ParentKidsPage';
+import { RegisterPage } from 'pages/RegistryPage';
+import React from 'react';
+import { ReactQueryConfig, ReactQueryConfigProvider } from 'react-query';
+import {
+  BrowserRouter, Redirect, Route, Switch,
+} from 'react-router-dom';
+import { darkTheme, lightTheme } from 'theme';
+import { useAuth } from 'utils/authState';
+import layout from 'utils/layout';
 import { AdminDrawer } from './AdminDrawer';
 import { AgencyDrawer } from './AgencyDrawer';
-import { ParentDrawer } from './ParentDrawer';
+import { DrawerItem } from './DrawerItem';
 import { GuardedRoute } from './GuardedRoute';
+import { ParentDrawer } from './ParentDrawer';
 
 // #region styles
 const Container = styled('div')(({ theme }) => ({
@@ -97,6 +99,8 @@ const App = () => {
                     <GuardedRoute path="/jadlospis/nowe-danie" component={AddMealPage} roles={['admin']} />
                     <GuardedRoute path="/dzieci/nowe-dziecko" component={AddKidPage} roles={['agency']} />
                     <GuardedRoute path="/dzieci" component={KidsPage} roles={['agency']} />
+                    <GuardedRoute path="/parent-dzieci/dodaj-dziecko" component={AddParentKidPage} roles={['parent']} />
+                    <GuardedRoute path="/parent-dzieci" component={ParentKidsPage} roles={['parent']} />
                     <Route path="/jadlospis" component={MenuPage} />
                     <Route component={EmptyPage} />
                   </Switch>

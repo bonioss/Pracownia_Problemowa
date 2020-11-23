@@ -1,16 +1,20 @@
-import { api, ApiResponse, PaginatedApiResponse } from 'api';
+import { api, ApiResponse } from 'api';
+import { Kid } from 'api/kid';
 import {
-  queryCache, useMutation, usePaginatedQuery, useQuery,
+  queryCache, useMutation, useQuery,
 } from 'react-query';
-import { ParentUser } from './auth';
 
-export interface Parent{
+export interface Parent {
   kidCode: string;
 }
 
 export const useAddKid = () => useMutation(
-  (data: Parent) => api.post<ApiResponse>('/parent/addKid', data).then(res => res.data),
-  { onSuccess: () => queryCache.invalidateQueries('kid') },
+  (data: Parent) => api.post<ApiResponse>(`/parent/addKid/${data.kidCode}`, data).then(res => res.data),
+  { onSuccess: () => queryCache.invalidateQueries('parent') },
 );
 
-// getMykids
+export const useGetMyKid = () => (
+  useQuery(['parent'], () => (
+    api.get<ApiResponse<Kid[]>>('/parent/getMyKids').then(res => res.data)
+  ))
+);

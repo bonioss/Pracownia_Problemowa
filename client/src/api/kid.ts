@@ -1,10 +1,8 @@
 import { api, ApiResponse, PaginatedApiResponse } from 'api';
 import {
-  queryCache, useMutation, usePaginatedQuery, useQuery,
+  queryCache, useMutation, usePaginatedQuery,
 } from 'react-query';
 import { FetchParams } from './agencies';
-
-import { AgencyUser } from './auth';
 
 export interface Kid {
   firstName: string;

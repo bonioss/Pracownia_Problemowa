@@ -1,8 +1,9 @@
-import React, { FC, useState } from 'react';
 import {
-  Dialog, DialogTitle, DialogContent, DialogActions,
-  Button, DialogContentText, useTheme, useMediaQuery, CircularProgress, styled,
+  Button, CircularProgress, Dialog, DialogActions, DialogContent,
+  DialogContentText, DialogTitle,
+  styled, useMediaQuery, useTheme,
 } from '@material-ui/core';
+import React, { FC, useState } from 'react';
 
 // #region styles
 const StyledProgress = styled(CircularProgress)(({ theme }) => ({

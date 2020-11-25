@@ -5,6 +5,7 @@ const User = require('../models/User.model');
 const Kid = require('../models/Kid.model');
 const Agency = require('../models/Agency.model');
 const Holidays = require("date-holidays");
+const { Schema } = require('mongoose');
 
 const getType = (type) => {
     let price=0;
@@ -327,11 +328,12 @@ exports.getOrderById = asyncHandler(async(req, res, next) => {
     const endIndex = page * limit;
 
     const results = {};
-    let order = await Order.findById({_id: req.params.id});
+    let order = await Order.findById({_id: req.params.id}).populate({path: 'kid', select: 'firstName lastName -_id'})
     
     if(!order) {
-        return next(new ErrorResponse(`Order with code ${req.params.id} has not exist.`, 404))
+        return next(new ErrorResponse(`Order with code ${req.params.id} has not exist.`, 404));
     }
+    
     if (endIndex < order.meals.length) {
         results.next = {
           page: page + 1,
@@ -348,8 +350,9 @@ exports.getOrderById = asyncHandler(async(req, res, next) => {
 
     results.numberOfPages = Math.ceil(order.meals.length / limit);
     try {
-      order.meals =  order.meals.slice((page-1)*limit, page*limit);
-      results.results = order
+      order.meals =  order.meals.slice((page-1)*limit, page*limit); 
+      order.meals.sort((a, b) => new Date(a.date) - new Date(b.date)); 
+      results.results = order;
       res.paginatedResults = results
       next()
     } catch (e) {
@@ -460,7 +463,7 @@ exports.deleteMeal = asyncHandler(async (req, res, next) => {
     })
 });
 
-// @desc    Create order for choosen kid
+// @desc    Create order summery for choosen kid
 // @route   post /api/v1/orders/summary/:kidCode
 // @access  Private
 exports.getPriceForOrder = asyncHandler(async (req, res, next) => {

@@ -1,5 +1,5 @@
 import { api, ApiResponse } from 'api';
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 
 // #region types
 export type Role = 'agency' | 'parent' | 'admin';
@@ -76,4 +76,10 @@ export const useAddAgency = () => useMutation(
 
 export const useAddKid = () => useMutation(
   (data: NewKid) => api.post<ApiResponse<AgencyUser>>('/kid/agencyAddKid', data).then(res => res.data),
+);
+
+export const useMe = () => useQuery(
+  ['me'], () => api.get<ApiResponse<User>>('/auth/me').then(res => res.data), {
+    refetchOnWindowFocus: false,
+  },
 );

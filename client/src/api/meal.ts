@@ -6,8 +6,8 @@ interface MealsParams {
   date: Date;
 }
 
-export type MealType = 'breakfast' | 'lunch' | 'soup' | 'main dish' | 'dinner' | 'teatime';
-export const MEAL_TYPES = ['breakfast', 'lunch', 'soup', 'main dish', 'dinner', 'teatime'] as const;
+export type MealType = 'breakfast' | 'lunch' | 'soup' | 'main dish' | 'dinner' | 'tea time';
+export const MEAL_TYPES = ['breakfast', 'lunch', 'soup', 'main dish', 'dinner', 'tea time'] as const;
 export interface Meal {
   _id: string;
   type: MealType;

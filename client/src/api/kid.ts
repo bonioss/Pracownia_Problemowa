@@ -5,6 +5,7 @@ import {
 import { FetchParams } from './agencies';
 
 export interface Kid {
+  _id: string;
   firstName: string;
   lastName: string;
   agencyCode: string;

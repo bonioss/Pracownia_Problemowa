@@ -15,10 +15,11 @@ const Details = styled('div')({
 interface Props {
   name?: string;
   email?: string;
+  text?: string;
 }
 
 export const DrawerHeader: FC<Props> = ({
-  name, email,
+  name, email, text,
 }): ReactElement => (
   <>
     <Container>
@@ -26,6 +27,7 @@ export const DrawerHeader: FC<Props> = ({
         <Details>
           <Typography variant="h6" noWrap>{name}</Typography>
           <Typography color="textSecondary" noWrap gutterBottom>{email}</Typography>
+          {text && <Typography color="textSecondary" noWrap gutterBottom>{text}</Typography>}
         </Details>
       </Grid>
     </Container>

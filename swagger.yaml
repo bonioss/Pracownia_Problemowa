@@ -808,6 +808,57 @@ paths:
                     default: false
                   error:
                     type: string
+  /orders/create/kids:
+    get:
+      summary: Get kids for order
+      tags: 
+      - Order
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object  
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                      firstName:
+                        type: string
+                      lastName:
+                        type: string
+                      agencyCode:
+                        type: string
+                      kidCode:
+                        type: string    
+        '403':
+          description: Role is not authorized to access this route
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string 
+        '404':
+          description: Kid not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string                  
   /orders/payment:
     post:
       summary: Update payment status

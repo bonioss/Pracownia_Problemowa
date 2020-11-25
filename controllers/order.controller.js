@@ -618,3 +618,26 @@ exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
         });
     }
 });
+
+// @desc    Get all kids for order
+// @route   GET /api/v1/orders/create/kids
+// @access  Private
+
+exports.getKidsForOrder = asyncHandler(async (req, res, next) => {
+    let kids = [];
+    //User parent
+    if (req.user.role === 'parent') {
+      const parent = await User.findOne({ _id: req.user._id });
+      kids = await Kid.find({ '_id':{ $in: parent.kids } }).select('-__v');
+    } else if (req.user.role === 'agency') { 
+      kids = await Kid.find({agencyCode: req.user.agencyCode}).select('-__v');; 
+    }
+    if(kids.length === 0) {
+        return next (new ErrorResponse(`Kids not found`, 404));
+    }
+    //Send response
+    res.status(200).json({
+      success: true,
+      data: kids
+    });
+  });

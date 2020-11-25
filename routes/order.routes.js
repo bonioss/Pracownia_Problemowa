@@ -7,7 +7,8 @@ const {
     getAvailableDate,
     updatePaymentStatus,
     deleteMeal,
-    getPriceForOrder
+    getPriceForOrder,
+    getKidsForOrder
 } = require('../controllers/order.controller');
 const router = express.Router();
 const { protect, authorize } = require('../middleware/auth');
@@ -39,6 +40,10 @@ router
 
 router
     .route('/summary/:kidCode')
-    .post(protect, authorize('agency', 'parent'), getPriceForOrder)   
+    .post(protect, authorize('agency', 'parent'), getPriceForOrder);
+    
+router
+    .route('/create/kids')
+    .get(protect, authorize('parent', 'agency'), getKidsForOrder);    
     
 module.exports = router;

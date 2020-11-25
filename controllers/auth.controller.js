@@ -149,7 +149,7 @@ res.status(200).json({
 // @desc    Register for parent
 // @route   POST /api/v1/auth/register
 // @access  Public
-exports.register=asyncHandler(async(req, res, next) => {
+exports.register = asyncHandler(async(req, res, next) => {
   try {
     const {email, password, firstName, lastName, agencyCode} = req.body;
   const agency = await Agency.findOne({agencyCode});
@@ -207,4 +207,19 @@ exports.register=asyncHandler(async(req, res, next) => {
     });
   }
   
-})
+});
+
+// @desc    Register for parent
+// @route   GET /api/v1/auth/me
+// @access  Public
+exports.getMe = asyncHandler( async(req, res, next) => {
+  let user = {};
+  if (req.user.role !== 'agency')
+    user = await User.findById({_id: req.user._id}).select('-kids -__v');
+  else 
+    user = await Agency.findById(({_id: req.user._id})).select('-__v');;  
+  res.status(200).json({
+    success: true,
+    data: user
+  });
+});

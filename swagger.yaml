@@ -110,64 +110,24 @@ paths:
                     default: false
                   error:
                     type: string              
-  /auth/addAgency:
-    post:
-      summary: Add agency, private route for Admin
+ 
+  /auth/me:
+    get:
+      summary: Get user info
       tags: 
       - Auth
-      requestBody:
-        required: true
-        description: A JSON object that contains crudentials.
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AddAgency'
       responses:
         '200':
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LoginAgency' 
-        '400':
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    default: false
-                  errors:
-                    type: object     
-                    properties:
-                      key: 
-                        type: string   
-        '403':
-          description: Role is not authorized to access this route
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    default: false
-                  error:
-                    type: string                                                       
-        '409':
-          description: 'E-mail already exsits'
-          content:
-            appication/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    default: false
-                  error:
-                    type: string                         
+                oneOf:
+                  - $ref: '#/components/schemas/LoginUser'
+                  - $ref: '#/components/schemas/LoginAgency'
+                decriminator:
+                  propertyName: role    
+                        
   /kid/agencyAddKid:
     post:
       summary: Add kid by agency, private route for Agency

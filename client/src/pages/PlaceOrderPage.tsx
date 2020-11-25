@@ -51,7 +51,7 @@ const DayContainer = styled('div')({
 });
 // #endregion
 
-interface TMPChild {
+export interface TMPChild {
   _id: string;
   firstName: string;
   lastName: string;

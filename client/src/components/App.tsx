@@ -5,7 +5,7 @@ import React from 'react';
 import {
   Switch, BrowserRouter, Route, Redirect,
 } from 'react-router-dom';
-import { useAuth } from 'utils/authState';
+import { useAuth, useSetAuth } from 'utils/authState';
 import { Root, getDrawerSidebar, getSidebarContent } from '@mui-treasury/layout';
 import layout from 'utils/layout';
 import { ReactComponent as PracowniaPosilkow } from 'assets/pracownia_posilkow.svg';
@@ -25,6 +25,10 @@ import { MenuPage } from 'pages/MenuPage';
 import { pl } from 'date-fns/locale';
 import { AddMealPage } from 'pages/AddMealPage';
 import { PlaceOrderPage } from 'pages/PlaceOrderPage';
+import { OrderPage } from 'pages/OrderPage';
+import { AxiosError } from 'axios';
+import { OrdersPage } from 'pages/OrdersPage';
+import { ParentOrdersPage } from 'pages/ParentOrdersPage';
 import { DrawerItem } from './DrawerItem';
 import { AdminDrawer } from './AdminDrawer';
 import { AgencyDrawer } from './AgencyDrawer';
@@ -53,10 +57,20 @@ const SidebarContent = styled(getSidebarContent(styled))({
 const App = () => {
   const DrawerSidebar = getDrawerSidebar(styled);
   const { user } = useAuth();
+  const setAuth = useSetAuth();
 
   const reactQueryConfig: ReactQueryConfig = React.useMemo(() => ({
     queries: {
       queryFnParamsFilter: args => args.slice(1),
+      onError: error => {
+        const err = error as AxiosError;
+        if (err.response?.status === 401) setAuth({ user: undefined });
+      },
+      retry: (count, error) => {
+        const err = error as AxiosError;
+        if (err.response?.status === 401) return false;
+        return (count < 2);
+      },
     },
   }), []);
 
@@ -96,6 +110,9 @@ const App = () => {
                   <GuardedRoute path="/jadlospis/nowe-danie" component={AddMealPage} roles={['admin']} />
                   <Route path="/jadlospis" component={MenuPage} />
                   <GuardedRoute path="/zamowienia/nowe" component={PlaceOrderPage} roles={['agency', 'parent']} />
+                  <Route path="/zamowienia/:id" component={OrderPage} />
+                  {user.role === 'agency' ? <GuardedRoute path="/zamowienia" component={OrdersPage} roles={['agency']} /> : null}
+                  {user.role === 'parent' ? <GuardedRoute path="/zamowienia" component={ParentOrdersPage} roles={['parent']} /> : null}
                   <Route component={EmptyPage} />
                 </Switch>
               </Root>

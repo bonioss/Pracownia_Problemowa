@@ -19,7 +19,7 @@ export const ParentDrawer: FC<Props> = ({ user }) => (
     <List component="nav">
       <DrawerItem name="Jadłospis" icon={MenuIcon} to="/jadlospis" />
       <DrawerItem name="Moje dzieci" icon={TestIcon} to="/dzieci" />
-      <DrawerItem name="[WIP] Nowe zamówienie" icon={TestIcon} to="/zamowienia/nowe" />
+      <DrawerItem name="Zamówienia" icon={TestIcon} to="/zamowienia" />
     </List>
   </>
 );

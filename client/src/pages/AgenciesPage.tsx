@@ -39,6 +39,7 @@ export const AgenciesPage = () => {
         )}
         items={(agencies.resolvedData?.results || []).map(agency => (
           <AgencyListItem
+            key={agency.agencyCode}
             data={agency}
             onClick={() => history.push(`/placowki/${agency.agencyCode}`)}
           />

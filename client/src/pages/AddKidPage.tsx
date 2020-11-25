@@ -32,6 +32,7 @@ export const AddKidPage = () => {
       onError: err => {
         setFormError(errorHandler(err, message => {
           switch (message) {
+            case 'Invalid agency code': return 'Nieprawidłowy kod placówki';
             default:
               return 'Wystąpił nieznany błąd, spróbuj ponownie.';
           }

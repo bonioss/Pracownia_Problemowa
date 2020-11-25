@@ -1,15 +1,17 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable max-len */
-import { Button, Paper, styled } from '@material-ui/core';
+import {
+  Button, MenuItem, Paper, styled, TextField,
+} from '@material-ui/core';
 import { GenericList } from 'components/GenericList';
 import { PageWrapper } from 'components/PageWrapper';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Alert } from '@material-ui/lab';
-import { useGetAgencyOrders, useGetMyKid, useKidOrders } from 'api/orders';
-import { useAuth } from 'utils/authState';
+import { useAllKids, useKidOrders } from 'api/orders';
 import { OrderListItem } from 'components/OrderListItem';
 import AddIcon from '@material-ui/icons/Add';
+import { Kid } from 'api/kid';
 
 // #region styles
 const OrdersList = styled(GenericList)({
@@ -39,20 +41,41 @@ const Actions = styled(Paper)(({ theme }) => ({
 // #endregion
 
 export const ParentOrdersPage = () => {
-  const { user } = useAuth();
   const [ordersPage, setOrdersPage] = useState(1);
   const [error] = useState('');
   const history = useHistory();
-  const [kidCode, setKidCode] = useState<string>('sBL14d6t0');
-  const orders = useKidOrders({ page: ordersPage, kidCode });
+  const [selectedChild, selectChild] = useState<Kid>();
+  const orders = useKidOrders({ page: ordersPage, kidCode: selectedChild?.kidCode });
+  const children = useAllKids();
 
-  const kids = useGetMyKid();
+  const handleChangeChild = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (children.data) {
+      const childId = event.target.value;
+      selectChild(children.data.find(child => child._id === childId));
+    }
+  };
 
   // TODO: What if code is invalid?
   return (
     <PageWrapper title="Zamówienie">
       <Actions>
         {error && <Alert severity="error">{error}</Alert>}
+
+        <TextField
+          id="select-child"
+          select
+          label="Wybierz dziecko"
+          value={selectedChild?._id || ''}
+          onChange={handleChangeChild}
+          variant="outlined"
+          style={{ minWidth: 200 }}
+        >
+          {(children.data || []).map(({ firstName, lastName, _id }) => (
+            <MenuItem key={_id} value={_id}>
+              {firstName} {lastName}
+            </MenuItem>
+          ))}
+        </TextField>
 
         <div style={{ flex: 1 }} />
 
@@ -65,17 +88,12 @@ export const ParentOrdersPage = () => {
         </Button>
       </Actions>
 
-      <div>
-        {kids.data?.map(kid => (
-          <p>{kid.firstName}</p>
-        ))}
-      </div>
-
       <OrdersList
         title="Zamówienia"
         loading={orders.isFetching}
         items={orders.resolvedData?.results.map(order => (
           <OrderListItem
+            key={order._id}
             data={order}
             onClick={() => history.push(`/zamowienia/${order._id}`)}
           />

@@ -16,10 +16,12 @@ import {
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { DatePicker } from '@material-ui/pickers';
+import { Kid } from 'api/kid';
 import { MealType, MEAL_TYPES } from 'api/meal';
 import {
-  Meals, OrderDay, useEarliestOrderDate, useGetOrderPrice, usePlaceOrder,
+  Meals, OrderDay, useAllKids, useEarliestOrderDate, useGetOrderPrice, usePlaceOrder,
 } from 'api/orders';
+import { useGetMyKid } from 'api/parent';
 import { PageWrapper } from 'components/PageWrapper';
 import { isBefore } from 'date-fns';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -51,28 +53,6 @@ const DayContainer = styled('div')({
 });
 // #endregion
 
-export interface TMPChild {
-  _id: string;
-  firstName: string;
-  lastName: string;
-  kidCode: string;
-}
-
-const children: TMPChild[] = [
-  {
-    _id: '1', firstName: 'Andrzej', lastName: 'Duda', kidCode: 'sBL14d6t0',
-  },
-  {
-    _id: '2', firstName: 'Jan', lastName: 'Owsik', kidCode: 'sBL14d6t0',
-  },
-  {
-    _id: '3', firstName: 'Waldek', lastName: 'Kolano', kidCode: 'bstrnty',
-  },
-  {
-    _id: '4', firstName: 'Yyyyy', lastName: 'Aaaaaa', kidCode: 'vfsgdr',
-  },
-];
-
 const steps = [
   'Wybór dziecka',
   'Wybór daty',
@@ -92,7 +72,7 @@ enum OrderStep {
 const daysNames = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'];
 
 export const PlaceOrderPage = () => {
-  const [selectedChild, selectChild] = useState<TMPChild>();
+  const [selectedChild, selectChild] = useState<Kid>();
   const [step, setStep] = useState(0);
   const [holidays, setHolidays] = useState(false);
   const [comments, setComments] = useState('');
@@ -102,7 +82,7 @@ export const PlaceOrderPage = () => {
   const [totalPrice, setTotalPrice] = useState<number>();
   const [placeOrder] = usePlaceOrder();
   const [error, setError] = useState('');
-  // const { user } = useAuth();
+  const children = useAllKids();
 
   const [meals, setMeals] = React.useState<Meals>({
     0: {
@@ -178,8 +158,10 @@ export const PlaceOrderPage = () => {
   };
 
   const handleChangeChild = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const childId = event.target.value;
-    selectChild(children.find(child => child._id === childId));
+    if (children.data) {
+      const childId = event.target.value;
+      selectChild(children.data.find(child => child._id === childId));
+    }
   };
 
   const handleNext = async () => {
@@ -264,7 +246,7 @@ export const PlaceOrderPage = () => {
                     variant="outlined"
                     style={{ minWidth: 200 }}
                   >
-                    {children.map(({ firstName, lastName, _id }) => (
+                    {(children.data || []).map(({ firstName, lastName, _id }) => (
                       <MenuItem key={_id} value={_id}>
                         {firstName} {lastName}
                       </MenuItem>

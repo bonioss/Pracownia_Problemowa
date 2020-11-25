@@ -1,12 +1,12 @@
 import {
   AltPaginatedApiResponse, api, ApiResponse, PaginatedApiResponse,
 } from 'api';
-import { TMPChild } from 'pages/PlaceOrderPage';
 import {
   queryCache, useMutation, usePaginatedQuery, useQuery,
 } from 'react-query';
 import { FetchParams } from './agencies';
 import { OrdersPeriod } from './auth';
+import { Kid } from './kid';
 import { Meal, MealType } from './meal';
 
 // #region types
@@ -37,7 +37,7 @@ export interface Order {
 
 export type OrderWithMeals = {
   meals: Omit<Meal, 'description'>[];
-  kid: Omit<TMPChild, '_id'>;
+  kid: Omit<Kid, '_id'>;
 } & Order;
 
 export type OrdersFetchParams = {
@@ -99,18 +99,23 @@ export const useOrder = (param: OrderFetchParams) => (
 export const useKidOrders = (param: KidOrdersFetchParams) => (
   usePaginatedQuery(['orders', param], ({ kidCode, ...params }: KidOrdersFetchParams) => (
     api.get<PaginatedApiResponse<Order>>(`/orders/${kidCode}`, { params }).then(res => res.data.data)
-  ))
+  ), { enabled: param.kidCode })
 );
 
 export const useRemoveMeal = () => useMutation(
   ({ kidCode, mealId, orderId }: RemoveMealParams) => (
     api.delete<ApiResponse>(`/orders/order/${orderId}/kid/${kidCode}/meal/${mealId}`).then(res => res.data)
   ),
-  { onSuccess: () => queryCache.invalidateQueries('order') },
+  {
+    onSuccess: () => {
+      queryCache.invalidateQueries('order');
+      queryCache.invalidateQueries('me');
+    },
+  },
 );
 
-export const useGetMyKid = () => (
-  useQuery(['parent'], () => (
-    api.get<ApiResponse<TMPChild[]>>('/parent/getMyKids').then(res => res.data.data)
+export const useAllKids = () => (
+  useQuery(['kids'], () => (
+    api.get<ApiResponse<Kid[]>>('/orders/create/kids').then(res => res.data.data)
   ))
 );

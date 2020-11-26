@@ -45,6 +45,8 @@ export interface AgencyUser {
   name: string;
   agencyCode: string;
   ordersPeriod: OrdersPeriod;
+  winterTermEnd: Date;
+  summerTermEnd: Date;
 }
 
 export type User = AgencyUser | ParentUser | AdminUser;
@@ -53,6 +55,8 @@ export interface NewAgency {
   email: string;
   name: string;
   ordersPeriod: OrdersPeriod;
+  winterTermEnd: Date;
+  summerTermEnd: Date;
 }
 
 export interface NewKid {

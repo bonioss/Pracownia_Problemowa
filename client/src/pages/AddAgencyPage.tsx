@@ -17,6 +17,8 @@ export const AddAgencyPage = () => {
       name: '',
       email: '',
       ordersPeriod: 'week',
+      summerTermEnd: new Date(),
+      winterTermEnd: new Date(),
     },
     resolver: zodResolver(schema),
   });

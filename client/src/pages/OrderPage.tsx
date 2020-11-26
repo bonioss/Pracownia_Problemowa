@@ -118,7 +118,6 @@ export const OrderPage = () => {
           <Typography>Data końcowa: {format(new Date(order.resolvedData.results.endDate), 'dd.MM.yyyy')}</Typography>
           <Typography>Podopieczny: {order.resolvedData.results.kid.firstName} {order.resolvedData.results.kid.lastName}</Typography>
           <Typography>Dodatkowe informacje: {order.resolvedData.results.comments}</Typography>
-          <Typography>Koszt: {order.resolvedData.results.price}zł</Typography>
         </Paper>
       )}
 

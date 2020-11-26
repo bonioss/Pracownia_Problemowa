@@ -21,7 +21,7 @@ export const OrderListItem: FC<Props> = ({ data, onClick }) => (
 
     <ListItemText
       primary={`Zamówienie z dnia ${format(new Date(data.startDate), 'dd.MM.yyyy')}`}
-      secondary={`Koszt zamówienia: ${data.price}zł`}
+      secondary={data.paid ? 'Opłacone' : `Do zapłacenia: ${data.price}zł`}
     />
   </ListItem>
 );

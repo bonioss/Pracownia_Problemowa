@@ -2,10 +2,8 @@ import {
   CssBaseline, Divider, List, styled, ThemeProvider,
 } from '@material-ui/core';
 import LogoutIcon from '@material-ui/icons/ExitToApp';
-import DateFnsUtils from '@material-ui/pickers/adapter/date-fns';
-import LocalizationProvider from '@material-ui/pickers/LocalizationProvider';
-import { getDrawerSidebar, getSidebarContent, Root } from '@mui-treasury/layout';
-import { ReactComponent as PracowniaPosilkow } from 'assets/pracownia_posilkow.svg';
+import { getSidebarContent, getDrawerSidebar, Root } from '@mui-treasury/layout';
+import { AxiosError } from 'axios';
 import { pl } from 'date-fns/locale';
 import { AddAgencyPage } from 'pages/AddAgencyPage';
 import { AddKidPage } from 'pages/AddKidPage';
@@ -15,19 +13,27 @@ import { AgenciesPage } from 'pages/AgenciesPage';
 import { AgencyPage } from 'pages/AgencyPage';
 import { EmptyPage } from 'pages/EmptyPage';
 import { KidsPage } from 'pages/KidsPage';
-import { LoginPage } from 'pages/LoginPage';
 import { LogoutPage } from 'pages/LogoutPage';
 import { MenuPage } from 'pages/MenuPage';
+import { OrderPage } from 'pages/OrderPage';
+import { OrdersPage } from 'pages/OrdersPage';
 import { ParentKidsPage } from 'pages/ParentKidsPage';
-import { RegisterPage } from 'pages/RegistryPage';
-import React from 'react';
+import { ParentOrdersPage } from 'pages/ParentOrdersPage';
+import { PlaceOrderPage } from 'pages/PlaceOrderPage';
+import React, { useEffect } from 'react';
 import { ReactQueryConfig, ReactQueryConfigProvider } from 'react-query';
+import { lightTheme, darkTheme } from 'theme';
+import { useAuth, useSetAuth } from 'utils/authState';
+import { ReactComponent as PracowniaPosilkow } from 'assets/pracownia_posilkow.svg';
+import { LocalizationProvider } from '@material-ui/pickers';
+import { LoginPage } from 'pages/LoginPage';
+import { RegisterPage } from 'pages/RegistryPage';
 import {
-  BrowserRouter, Redirect, Route, Switch,
+  BrowserRouter, Route, Redirect, Switch,
 } from 'react-router-dom';
-import { darkTheme, lightTheme } from 'theme';
-import { useAuth } from 'utils/authState';
+import DateFnsUtils from '@material-ui/pickers/adapter/date-fns';
 import layout from 'utils/layout';
+import { useMe } from 'api/auth';
 import { AdminDrawer } from './AdminDrawer';
 import { AgencyDrawer } from './AgencyDrawer';
 import { DrawerItem } from './DrawerItem';
@@ -56,10 +62,25 @@ const SidebarContent = styled(getSidebarContent(styled))({
 const App = () => {
   const DrawerSidebar = getDrawerSidebar(styled);
   const { user } = useAuth();
+  const setAuth = useSetAuth();
+  const me = useMe();
+
+  useEffect(() => {
+    if (me.data) setAuth({ user: me.data?.data });
+  }, [me]);
 
   const reactQueryConfig: ReactQueryConfig = React.useMemo(() => ({
     queries: {
       queryFnParamsFilter: args => args.slice(1),
+      onError: error => {
+        const err = error as AxiosError;
+        if (err.response?.status === 401) setAuth({ user: undefined });
+      },
+      retry: (count, error) => {
+        const err = error as AxiosError;
+        if (err.response?.status === 401) return false;
+        return (count < 2);
+      },
     },
   }), []);
 
@@ -97,11 +118,15 @@ const App = () => {
                     <GuardedRoute path="/placowki/:code" component={AgencyPage} roles={['admin']} />
                     <GuardedRoute path="/placowki" component={AgenciesPage} roles={['admin']} />
                     <GuardedRoute path="/jadlospis/nowe-danie" component={AddMealPage} roles={['admin']} />
+                    <Route path="/jadlospis" component={MenuPage} />
+                    <GuardedRoute path="/zamowienia/nowe" component={PlaceOrderPage} roles={['agency', 'parent']} />
+                    <Route path="/zamowienia/:id" component={OrderPage} />
+                    {user.role === 'agency' ? <GuardedRoute path="/zamowienia" component={OrdersPage} roles={['agency']} /> : null}
+                    {user.role === 'parent' ? <GuardedRoute path="/zamowienia" component={ParentOrdersPage} roles={['parent']} /> : null}
                     <GuardedRoute path="/dzieci/nowe-dziecko" component={AddKidPage} roles={['agency']} />
                     <GuardedRoute path="/dzieci" component={KidsPage} roles={['agency']} />
                     <GuardedRoute path="/parent-dzieci/dodaj-dziecko" component={AddParentKidPage} roles={['parent']} />
                     <GuardedRoute path="/parent-dzieci" component={ParentKidsPage} roles={['parent']} />
-                    <Route path="/jadlospis" component={MenuPage} />
                     <Route component={EmptyPage} />
                   </Switch>
                 </Root>

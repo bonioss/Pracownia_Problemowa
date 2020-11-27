@@ -2,7 +2,9 @@ import {
   Button, Collapse, MenuItem, styled, TextField,
 } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
+import { DatePicker } from '@material-ui/pickers';
 import { NewAgency, ORDERS_PERIODS } from 'api/auth';
+import { isAfter } from 'date-fns';
 import React, { FC } from 'react';
 import { Controller } from 'react-hook-form';
 import { periodLabel } from 'utils/mappers';
@@ -36,8 +38,14 @@ export const schema = z.object({
   name: z.string()
     .min(1, { message: 'Nazwa placówki jest wymagana' })
     .max(100, { message: 'Nazwa placówki musi być krótsza niż 100 znaków' }),
+  summerTermEnd: z.date(),
+  winterTermEnd: z.date(),
   ordersPeriod: z.enum([...ORDERS_PERIODS]),
-});
+})
+  .refine(data => isAfter(data.winterTermEnd, data.summerTermEnd), {
+    message: 'Data semestru zimowego musi być późniejsza niż data semestru letniego',
+    path: ['winterTermEnd'],
+  });
 
 export const AddAgencyForm: FC<FormProps<NewAgency> & Stylable> = ({
   onSubmit, error, form, ...props
@@ -102,6 +110,50 @@ export const AddAgencyForm: FC<FormProps<NewAgency> & Stylable> = ({
               </MenuItem>
             ))}
           </TextField>
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="summerTermEnd"
+        render={p => (
+          <DatePicker
+            label="Koniec semestru letniego"
+            allowKeyboardControl={false}
+            renderInput={prop => (
+              <TextField
+                {...prop}
+                variant="outlined"
+                helperText={errors.summerTermEnd?.message || ''}
+                error={!!errors.summerTermEnd}
+                margin="normal"
+                required
+              />
+            )}
+            {...p}
+          />
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="winterTermEnd"
+        render={p => (
+          <DatePicker
+            label="Koniec semestru zimowego"
+            allowKeyboardControl={false}
+            renderInput={prop => (
+              <TextField
+                {...prop}
+                variant="outlined"
+                helperText={errors.winterTermEnd?.message || ''}
+                error={!!errors.winterTermEnd}
+                margin="normal"
+                required
+              />
+            )}
+            {...p}
+          />
         )}
       />
 

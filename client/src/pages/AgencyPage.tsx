@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable max-len */
 import {
   Button, Paper, styled,
@@ -12,6 +13,8 @@ import EditIcon from '@material-ui/icons/Edit';
 import { ConfirmDialog } from 'components/ConfirmDialog';
 import { errorHandler } from 'utils/errorHandler';
 import { Alert } from '@material-ui/lab';
+import { useGetAgencyOrders } from 'api/orders';
+import { OrderListItem } from 'components/OrderListItem';
 
 // #region styles
 const OrdersList = styled(GenericList)({
@@ -52,6 +55,7 @@ export const AgencyPage = () => {
   const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteAgency] = useDeleteAgency();
   const [error, setError] = useState('');
+  const orders = useGetAgencyOrders({ page: ordersPage, agencyCode: code });
 
   const handleDelete = async () => {
     if (agency.data) {
@@ -99,19 +103,21 @@ export const AgencyPage = () => {
         </Button>
       </Actions>
 
-      {!agency.isLoading && (
-        <>
-          <OrdersList
-            title="Zamówienia"
-            items={[]}
-            pagination={{
-              count: 4,
-              page: ordersPage,
-              onPageChange: (_e, value) => setOrdersPage(value),
-            }}
+      <OrdersList
+        title="Zamówienia"
+        loading={orders.isFetching}
+        items={orders.resolvedData?.results.map(order => (
+          <OrderListItem
+            data={order}
+            onClick={() => history.push(`/zamowienia/${order._id}`)}
           />
-        </>
-      )}
+        )) || []}
+        pagination={{
+          count: orders.resolvedData?.numberOfPages || 0,
+          page: ordersPage,
+          onPageChange: (_e, value) => setOrdersPage(value),
+        }}
+      />
 
       <ConfirmDialog
         isOpen={isDeleteDialogOpen}

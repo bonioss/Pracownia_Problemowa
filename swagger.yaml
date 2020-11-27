@@ -109,7 +109,65 @@ paths:
                     type: boolean
                     default: false
                   error:
-                    type: string              
+                    type: string 
+  /auth/addAgency:
+    post:
+      summary: Add agency, private route for Admin
+      tags: 
+      - Auth
+      requestBody:
+        required: true
+        description: A JSON object that contains crudentials.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddAgency'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginAgency' 
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  errors:
+                    type: object     
+                    properties:
+                      key: 
+                        type: string   
+        '403':
+          description: Role is not authorized to access this route
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string                                                       
+        '409':
+          description: 'E-mail already exsits or invalid date'
+          content:
+            appication/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string                                
  
   /auth/me:
     get:
@@ -236,11 +294,17 @@ paths:
                     type: string
       
 
-  /parent/addKid:
+  /parent/addKid/{kidCode}:
     post:
       summary: Add kid to parent, private route for Parent
       tags: 
       - Parent
+      parameters:
+      - in: path
+        name: kidCode
+        schema:
+          type: string
+        description: Choosen Kid code 
       requestBody:
         required: true
         description: A JSON object that contains crudentials.

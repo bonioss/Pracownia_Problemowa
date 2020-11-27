@@ -41,7 +41,8 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
     let endDate = new Date(startDate);
     const kid = await Kid.findOne({kidCode: req.params.kidCode});
     const agency = await Agency.findOne({agencyCode: user.agencyCode});
-
+    let wallet = 0;
+    let userID = '';
     //check if date is proper
     if(startDate <= new Date (Date.now())) {
         return next (new ErrorResponse(`Please provide date later than today`, 409));
@@ -54,23 +55,34 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
 
     //check if agency or parent has choosen kid
     if(user.role === 'agency') {
-      const kids = await Kid.find({agencyCode: user.agencyCode});
-      let hasKid=false;
-      for(const k of kids) {
-          if(k.agencyCode===kid.agencyCode) {
-            hasKid = true;
-            break;
+        const kids = await Kid.find({agencyCode: user.agencyCode});
+        let hasKid=false;
+        for(const k of kids) {
+            if(k.agencyCode===kid.agencyCode) {
+              hasKid = true;
+              break;
+            }
+        
           }
-      }
-      if(!hasKid) {
-        return next (new ErrorResponse(`Kid with code ${req.params.kidCode} not found`, 404));
-      }
-    } else if(user.role==='parent') {
-        const parent = await User.findOne({email: user.email});
-        if(!parent.kids.includes(kid.id)) {
-            return next (new ErrorResponse(`Kid with code ${req.params.kidCode} not found`, 404));
+        if(!hasKid) {
+          return next (new ErrorResponse(`Kid with code ${req.params.kidCode} not found`, 404));
         }
-    }
+      
+      const parents = await User.find({agencyCode: user.agencyCode});      
+        for (const p of parents) {
+            if(p.kids.includes(kid.id)) {
+              wallet = p.wallet ;
+              userID = p._id;
+            }
+        }  
+      } else if(user.role==='parent') {
+          const parent = await User.findOne({email: user.email});
+          if(!parent.kids.includes(kid.id)) {
+              return next (new ErrorResponse(`Kid with code ${req.params.kidCode} not found`, 404));
+          }
+          wallet = parent.wallet;
+          userID = user.id;
+      }
 
     //check if order can start on choosen date
     const kidOrders = await Order.find({kidCode: req.params.kidCode});
@@ -103,7 +115,16 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
         for(m of meals) {
             finalPrice += m.price;
         }
-        if(user.wallet > 0) finalPrice -= user.wallet
+        if(wallet > 0) {
+            finalPrice -= wallet;
+            wallet = 0;
+            await User.updateOne({_id: userID}, {wallet: wallet});
+        }
+        if(finalPrice < 0) {
+            wallet -= finalPrice;
+            finalPrice -= finalPrice;
+            await User.updateOne({_id: userID}, {wallet: wallet});
+        }
         const order = await Order.create({
             agencyCode: user.agencyCode,
             kidCode: req.params.kidCode,
@@ -144,7 +165,16 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
     for(m of meals) {
         finalPrice += m.price;
     }
-    if(user.wallet > 0) finalPrice -= user.wallet
+    if(wallet > 0) {
+        finalPrice -= wallet;
+        wallet = 0;
+        await User.updateOne({_id: userID}, {wallet: wallet});
+    }
+    if(finalPrice < 0) {
+        wallet -= finalPrice;
+        finalPrice -= finalPrice;
+        await User.updateOne({_id: userID}, {wallet: wallet});
+    }
     const order = await Order.create({
         agencyCode: user.agencyCode,
         kidCode: req.params.kidCode,
@@ -194,7 +224,18 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
         for(m of meals) {
             finalPrice += m.price;
         }
-        if(user.wallet > 0) finalPrice -= user.wallet
+        if(wallet > 0) {
+            finalPrice -= wallet;
+            wallet = 0;
+            await User.updateOne({_id: userID}, {wallet: wallet});
+        }
+        if(finalPrice < 0) {
+            
+            wallet -= finalPrice;
+            console.log(wallet);
+            finalPrice -= finalPrice;
+            await User.updateOne({_id: userID}, {wallet: wallet});
+        }
         const order = await Order.create({
             agencyCode: user.agencyCode,
             kidCode: req.params.kidCode,
@@ -475,7 +516,7 @@ exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
     let endDate = new Date(startDate);
     const kid = await Kid.findOne({kidCode: req.params.kidCode});
     const agency = await Agency.findOne({agencyCode: user.agencyCode});
-
+    let wallet = 0;
     //check if date is proper
     if(startDate <= new Date (Date.now())) {
         return next (new ErrorResponse(`Please provide date later than today`, 409));
@@ -495,15 +536,24 @@ exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
             hasKid = true;
             break;
           }
-      }
+      
+        }
       if(!hasKid) {
         return next (new ErrorResponse(`Kid with code ${req.params.kidCode} not found`, 404));
       }
+    
+    const parents = await User.find({agencyCode: user.agencyCode});      
+      for (const p of parents) {
+          if(p.kids.includes(kid.id)) {
+            wallet = p.wallet ;
+          }
+      }  
     } else if(user.role==='parent') {
         const parent = await User.findOne({email: user.email});
         if(!parent.kids.includes(kid.id)) {
             return next (new ErrorResponse(`Kid with code ${req.params.kidCode} not found`, 404));
         }
+        wallet = parent.wallet;
     }
 
     //check if order can start on choosen date
@@ -537,7 +587,12 @@ exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
         for(m of meals) {
             finalPrice += m.price;
         }
-        if(user.wallet > 0) finalPrice -= user.wallet
+        if(wallet > 0) {
+            finalPrice -= wallet;
+        }
+        if(finalPrice < 0) {
+            finalPrice -= finalPrice;
+        }
 
         res.status(200).json({
             success: true,
@@ -569,7 +624,12 @@ exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
     for(m of meals) {
         finalPrice += m.price;
     }
-    if(user.wallet > 0) finalPrice -= user.wallet
+    if(wallet > 0) {
+        finalPrice -= wallet;
+    }
+    if(finalPrice < 0) {
+        finalPrice -= finalPrice;
+    }
 
     res.status(200).json({
         success: true,
@@ -610,7 +670,12 @@ exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
         for(m of meals) {
             finalPrice += m.price;
         }
-        if(user.wallet > 0) finalPrice -= user.wallet
+        if(wallet > 0) {
+            finalPrice -= wallet;
+        }
+        if(finalPrice < 0) {
+            finalPrice -= finalPrice;
+        }
         
         res.status(200).json({
             success: true,

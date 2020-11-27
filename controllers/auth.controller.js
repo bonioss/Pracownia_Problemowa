@@ -73,8 +73,10 @@ let checkCrudentials={};
 checkCrudentials.user = await User.findOne({email});
 checkCrudentials.agency = await Agency.findOne({email});
 
-if(winterTermEnd <= new Date(Date.now()) || summerTermEnd <= new Date(Date.now())) {
+if(new Date(winterTermEnd) <= new Date(Date.now()) || new Date(summerTermEnd) <= new Date(Date.now())) {
   return next (new ErrorResponse(`Please provide date later than today`, 409));
+} else if (new Date(winterTermEnd) >= new Date(summerTermEnd)) {
+  return next (new ErrorResponse(`Summer term end must be later than winter one`, 409));
 }
 
   //check if mail is unique
@@ -89,7 +91,7 @@ const password = generator.generate({
 const agencyCode = shortid.generate();
 
 //create Agency
-console.log(winterTermEnd);
+
 const agency = await Agency.create({
   email,
   password,

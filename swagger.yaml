@@ -882,8 +882,60 @@ paths:
                     type: boolean
                     default: false
                   error:
-                    type: string                  
-  /orders/payment:
+                    type: string 
+  /orders/stats/summary?date={date}:
+    get:
+      summary: Get statistics
+      tags: 
+      - Order
+      parameters:
+      - in: query
+      name: date
+      schema:
+        type: date
+      description: Date when meal is served
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object  
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        agency:
+                          type: string
+                        breakfast:
+                          type: number
+                        lunch:
+                          type: number
+                        soup:
+                          type: number
+                        mainDish:
+                          type: number
+                        dinner:
+                          type: number  
+                        teaTime:
+                          type: number    
+        '403':
+          description: Role is not authorized to access this route
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    default: false
+                  error:
+                    type: string 
+                                  
+  /orders/payment/{id}:
     post:
       summary: Update payment status
       tags: 

@@ -5,7 +5,6 @@ const User = require('../models/User.model');
 const Kid = require('../models/Kid.model');
 const Agency = require('../models/Agency.model');
 const Holidays = require("date-holidays");
-const { Schema } = require('mongoose');
 
 const getType = (type) => {
     let price=0;
@@ -36,7 +35,8 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
     const hd = new Holidays('PL');
     const user = req.user;
     let { startDate, orders, comments, holidays } = req.body;
-    startDate = new Date(startDate);
+    startDate = new Date(`${startDate} 01:00`);
+    console.log(startDate);
     let meals = [];
     let endDate = new Date(startDate);
     const kid = await Kid.findOne({kidCode: req.params.kidCode});
@@ -687,7 +687,6 @@ exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
 // @desc    Get all kids for order
 // @route   GET /api/v1/orders/create/kids
 // @access  Private
-
 exports.getKidsForOrder = asyncHandler(async (req, res, next) => {
     let kids = [];
     //User parent
@@ -706,3 +705,75 @@ exports.getKidsForOrder = asyncHandler(async (req, res, next) => {
       data: kids
     });
   });
+
+// @desc    Get orders stats
+// @route   GET /api/v1/orders/stats?date=${date}
+// @access  Private, admin
+
+exports.getStats = asyncHandler(async (req, res, next) => {
+    let stats = [];
+    console.log(req.query.date);
+    let date = new Date(Date.now());
+    if(req.query.date !== undefined) 
+        date = new Date(req.query.date);
+        console.log(date);
+    const orders = await Order.find({'startDate': {"$lte" : date}, 'endDate': {"$gte": date}}).sort({agencyCode: 1});
+    console.log(orders);
+    let agency = '';
+    let breakfast = 0;
+    let lunch = 0;
+    let soup = 0;
+    let mainDish = 0;
+    let dinner = 0;
+    let teaTime = 0;
+    let name = {};
+    for(o of orders) {
+        if(agency !== o.agencyCode && agency !=='') {
+            if(breakfast + lunch + soup + mainDish + dinner + teaTime > 0) {
+                stats.push({
+                    agency: name.name,
+                    breakfast,
+                    lunch,
+                    soup,
+                    mainDish,
+                    dinner,
+                    teaTime
+                });  
+                breakfast = 0;
+                lunch = 0;
+                soup = 0;
+                mainDish = 0;
+                dinner = 0;
+                teaTime = 0;
+            }
+           }
+           agency = o.agencyCode;
+           name = await Agency.findOne({agencyCode: agency});
+           
+        for(m of o.meals) {
+            if (new Date(m.date.setHours(1, 0, 0, 0)).getTime() !== date.getTime()) continue;
+            if(m.type === 'breakfast') breakfast += 1;
+            else if(m.type === 'lunch') lunch += 1;
+            else if(m.type === 'soup') soup += 1;
+            else if(m.type === 'main dish') mainDish += 1;
+            else if(m.type === 'dinner') dinner += 1;
+            else if(m.type === 'tea time') teaTime += 1;
+        }
+    }
+    if(breakfast + lunch + soup + mainDish + dinner + teaTime > 0) {
+    stats.push({
+        agency: name.name,
+        breakfast,
+        lunch,
+        soup,
+        mainDish,
+        dinner,
+        teaTime
+    });
+    }
+    res.status(200).json({
+        success: true,
+        data: stats
+    })
+
+})

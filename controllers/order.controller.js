@@ -35,7 +35,7 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
     const hd = new Holidays('PL');
     const user = req.user;
     let { startDate, orders, comments, holidays } = req.body;
-    startDate = new Date(`${startDate}T02:00:00`);
+    startDate = new Date(`${startDate}T00:00:00`);
     console.log(startDate);
     let meals = [];
     let endDate = new Date(startDate);
@@ -294,10 +294,10 @@ exports.getOrdersByAgencyCode = asyncHandler(async(req, res, next) => {
         .skip(startIndex)
         .select('-meals -__v')
         .exec()
-      res.paginatedResults = results
-      next()
+      res.paginatedResults = results;
+      next();
     } catch (e) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,  
         error: e.message 
     })
@@ -346,10 +346,10 @@ exports.getOrdersByKidCode = asyncHandler(async(req, res, next) => {
         .skip(startIndex)
         .select('-meals -__v')
         .exec()
-      res.paginatedResults = results
-      next()
+      res.paginatedResults = results;
+      next();
     } catch (e) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,  
         error: e.message 
     })
@@ -399,7 +399,7 @@ exports.getOrderById = asyncHandler(async(req, res, next) => {
       res.paginatedResults = results
       next()
     } catch (e) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,  
         error: e.message 
     })
@@ -723,13 +723,10 @@ exports.getKidsForOrder = asyncHandler(async (req, res, next) => {
 
 exports.getStats = asyncHandler(async (req, res, next) => {
     let stats = [];
-    console.log(req.query.date);
     let date = new Date(Date.now());
     if(req.query.date !== undefined) 
         date = new Date(req.query.date);
-        console.log(date);
     const orders = await Order.find({'startDate': {"$lte" : date}, 'endDate': {"$gte": date}}).sort({agencyCode: 1});
-    console.log(orders);
     let agency = '';
     let breakfast = 0;
     let lunch = 0;

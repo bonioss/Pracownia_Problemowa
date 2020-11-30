@@ -40,7 +40,6 @@ exports.myMeals = asyncHandler(async (req, res, next) => {
     let startDate = new Date(req.query.date);
     let finishDate = new Date(req.query.date);
     finishDate.setDate(finishDate.getDate() + 1);
-    console.log(startDate);
     const count = await Meal.countDocuments({"date": {"$gte":startDate, "$lt": finishDate}}).exec()
     if (endIndex < count) {
       results.next = {
@@ -63,7 +62,7 @@ exports.myMeals = asyncHandler(async (req, res, next) => {
       res.paginatedResults = results
       next()
     } catch (e) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,  
         error: e.message 
     })

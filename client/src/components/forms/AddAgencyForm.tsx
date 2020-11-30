@@ -42,8 +42,8 @@ export const schema = z.object({
   winterTermEnd: z.date(),
   ordersPeriod: z.enum([...ORDERS_PERIODS]),
 })
-  .refine(data => isAfter(data.winterTermEnd, data.summerTermEnd), {
-    message: 'Data semestru zimowego musi być późniejsza niż data semestru letniego',
+  .refine(data => isAfter(data.summerTermEnd, data.winterTermEnd), {
+    message: 'Data semestru letniego musi być późniejsza niż data semestru zimowego',
     path: ['winterTermEnd'],
   });
 

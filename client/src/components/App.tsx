@@ -109,6 +109,8 @@ const App = () => {
                   </DrawerSidebar>
 
                   <Switch>
+                    {user.role === 'admin' ? <Route path="/" exact><Redirect to="/statystyki" /></Route> : null}
+                    {['parent', 'agency'].includes(user.role) ? <Route path="/" exact><Redirect to="/zamowienia" /></Route> : null}
                     <Route path={['/logowanie', '/rejestracja']}><Redirect to="/" /></Route>
                     <Route path="/wyloguj" component={LogoutPage} />
                     <GuardedRoute path="/placowki/nowa" component={AddAgencyPage} roles={['admin']} />

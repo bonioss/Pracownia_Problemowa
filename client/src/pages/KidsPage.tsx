@@ -1,6 +1,6 @@
 import { Button, styled } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
-import { useKids, useDeleteKid, Kid } from 'api/kid';
+import { useKids, useDeleteKid } from 'api/kid';
 import { GenericList } from 'components/GenericList';
 import { GenericListHeader } from 'components/GenericListHeader';
 import { KidListItem } from 'components/KidListItem';
@@ -18,16 +18,12 @@ const KidsList = styled(GenericList)({
 });
 // #endregion
 
-interface KidPageParams {
-  code: string;
-}
-
 export const KidsPage = () => {
   const history = useHistory();
   const [page, setPage] = useState(1);
   const kids = useKids({ limit: 10, page });
   const [deleteKid] = useDeleteKid();
-  const [error, setError] = useState('');
+  const [, setError] = useState('');
 
   return (
     <PageWrapper title="Dzieci">

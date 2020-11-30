@@ -33,6 +33,7 @@ import {
 } from 'react-router-dom';
 import DateFnsUtils from '@material-ui/pickers/adapter/date-fns';
 import layout from 'utils/layout';
+import { AdminStatsPage } from 'pages/AdminStatsPage';
 import { AdminDrawer } from './AdminDrawer';
 import { AgencyDrawer } from './AgencyDrawer';
 import { DrawerItem } from './DrawerItem';
@@ -73,7 +74,7 @@ const App = () => {
       },
       retry: (count, error) => {
         const err = error as AxiosError;
-        if (err.response?.status === 401) return false;
+        if (err.response?.status === 401 || err.response?.status === 404) return false;
         return (count < 2);
       },
     },
@@ -123,6 +124,7 @@ const App = () => {
                     <GuardedRoute path="/dzieci" component={KidsPage} roles={['agency']} />
                     <GuardedRoute path="/parent-dzieci/dodaj-dziecko" component={AddParentKidPage} roles={['parent']} />
                     <GuardedRoute path="/parent-dzieci" component={ParentKidsPage} roles={['parent']} />
+                    <GuardedRoute path="/statystyki" component={AdminStatsPage} roles={['admin']} />
                     <Route component={EmptyPage} />
                   </Switch>
                 </Root>

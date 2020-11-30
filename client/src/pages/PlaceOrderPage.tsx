@@ -16,6 +16,7 @@ import {
 } from '@material-ui/core';
 import { Alert } from '@material-ui/lab';
 import { DatePicker } from '@material-ui/pickers';
+import { ParentUser } from 'api/auth';
 import { Kid } from 'api/kid';
 import { MealType, MEAL_TYPES } from 'api/meal';
 import {
@@ -25,6 +26,7 @@ import { useGetMyKid } from 'api/parent';
 import { PageWrapper } from 'components/PageWrapper';
 import { isBefore } from 'date-fns';
 import React, { useEffect, useMemo, useState } from 'react';
+import { useAuth } from 'utils/authState';
 import { errorHandler } from 'utils/errorHandler';
 import { mealLabelAndIcon } from 'utils/mappers';
 
@@ -83,6 +85,7 @@ export const PlaceOrderPage = () => {
   const [placeOrder] = usePlaceOrder();
   const [error, setError] = useState('');
   const children = useAllKids();
+  const { user } = useAuth();
 
   const [meals, setMeals] = React.useState<Meals>({
     0: {
@@ -197,7 +200,7 @@ export const PlaceOrderPage = () => {
         comments,
         holidays,
       })
-        .then(res => setTotalPrice(res?.data))
+        .then(res => setTotalPrice(res?.data.price))
         .catch(() => setTotalPrice(undefined));
     }
     setTotalPrice(undefined);
@@ -354,7 +357,9 @@ export const PlaceOrderPage = () => {
                     <div style={{ marginTop: 16, display: 'flex', alignItems: 'center' }}>
                       <Typography style={{ marginRight: 8 }}>Razem: </Typography>
                       {totalPrice !== undefined ? (
-                        <Typography><b>{totalPrice}zł</b></Typography>
+                        <Typography>
+                          <b>{totalPrice}zł</b>  (-{(user as ParentUser).wallet}zł z portfela)
+                        </Typography>
                       ) : (
                         <CircularProgress size={20} />
                       )}

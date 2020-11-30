@@ -17,6 +17,10 @@ const AgenciesList = styled(GenericList)({
 });
 // #endregion
 
+/**
+ * Komponent podstrony listy placówek
+ * @component
+ */
 export const AgenciesPage = () => {
   const history = useHistory();
   const [page, setPage] = useState(1);

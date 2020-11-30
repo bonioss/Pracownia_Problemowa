@@ -29,6 +29,9 @@ const StyledTextField = withStyles({
 })(TextField);
 // #endregion
 
+/**
+ * Schemat walidacji formularza rejestracji
+ */
 export const schema = z.object({
   email: z.string()
     .min(1, { message: 'Email jest wymagany' })
@@ -49,15 +52,21 @@ export const schema = z.object({
     path: ['passwordConfirm'],
   });
 
-export const RegistryForm: FC<FormProps<RegisterParams> & Stylable> = ({
-  onSubmit, error, form, ...props
-}) => {
+/**
+ * Formularz rejestracji
+ * @param props Właściwości formularza
+ * @component
+ */
+export const RegistryForm: FC<FormProps<RegisterParams> & Stylable> = props => {
+  const {
+    onSubmit, error, form, ...rest
+  } = props;
   const {
     handleSubmit, register, errors, formState,
   } = form;
 
   return (
-    <Form {...props} onSubmit={handleSubmit(onSubmit)}>
+    <Form {...rest} onSubmit={handleSubmit(onSubmit)}>
       <Collapse in={!!error}>
         {error && <Alert severity="error">{error}</Alert>}
       </Collapse>

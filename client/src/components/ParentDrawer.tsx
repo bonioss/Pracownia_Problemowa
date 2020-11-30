@@ -7,24 +7,34 @@ import OrdersIcon from '@material-ui/icons/ListAlt';
 import { DrawerHeader } from './DrawerHeader';
 import { DrawerItem } from './DrawerItem';
 
-interface Props {
+/** Właściwości komponentu nagłówka panelu bocznego rodzica */
+export interface Props {
+  /** Obiekt użytkownika */
   user: ParentUser;
 }
 
-export const ParentDrawer: FC<Props> = ({ user }) => (
-  <>
-    <DrawerHeader
-      name={`${user.firstName} ${user.lastName}`}
-      email={user.email}
-      text={`W portfelu: ${user.wallet}zł`}
-    />
+/**
+ * Komponent szablonu nagłówka listy
+ * @param props Właściwości komponentu
+ * @component
+ */
+export const ParentDrawer: FC<Props> = props => {
+  const { user } = props;
+  return (
+    <>
+      <DrawerHeader
+        name={`${user.firstName} ${user.lastName}`}
+        email={user.email}
+        text={`W portfelu: ${user.wallet}zł`}
+      />
 
-    <Divider />
+      <Divider />
 
-    <List component="nav">
-      <DrawerItem name="Jadłospis" icon={MenuIcon} to="/jadlospis" exact={false} />
-      <DrawerItem name="Zamówienia" icon={OrdersIcon} to="/zamowienia" exact={false} />
-      <DrawerItem name="Moje dzieci" icon={TestIcon} to="/parent-dzieci" exact={false} />
-    </List>
-  </>
-);
+      <List component="nav">
+        <DrawerItem name="Jadłospis" icon={MenuIcon} to="/jadlospis" exact={false} />
+        <DrawerItem name="Zamówienia" icon={OrdersIcon} to="/zamowienia" exact={false} />
+        <DrawerItem name="Moje dzieci" icon={TestIcon} to="/parent-dzieci" exact={false} />
+      </List>
+    </>
+  );
+};

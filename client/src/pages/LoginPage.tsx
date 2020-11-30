@@ -38,6 +38,10 @@ const AppLogo = styled(PracowniaPosilkow)({
 });
 // #endregion
 
+/**
+ * Komponent podstrony logowania
+ * @component
+ */
 export const LoginPage = () => {
   const [login] = useLogin();
   const [formError, setError] = useState('');

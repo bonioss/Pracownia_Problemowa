@@ -7,20 +7,29 @@ import MenuIcon from '@material-ui/icons/RestaurantMenu';
 import { DrawerHeader } from './DrawerHeader';
 import { DrawerItem } from './DrawerItem';
 
-interface Props {
+export interface Props {
+  /** Obiekt użytkownika */
   user: AdminUser;
 }
 
-export const AdminDrawer: FC<Props> = ({ user }) => (
-  <>
-    <DrawerHeader name={`${user.firstName} ${user.lastName}`} email={user.email} />
+/**
+ * Panel boczny administratora
+ * @param props Właściwości panelu
+ * @component
+ */
+export const AdminDrawer: FC<Props> = props => {
+  const { user } = props;
+  return (
+    <>
+      <DrawerHeader name={`${user.firstName} ${user.lastName}`} email={user.email} />
 
-    <Divider />
+      <Divider />
 
-    <List component="nav">
-      <DrawerItem name="Jadłospis" icon={MenuIcon} to="/jadlospis" exact={false} />
-      <DrawerItem name="Placówki" icon={AgencyIcon} to="/placowki" exact={false} />
-      <DrawerItem name="Statystyki" icon={StatsIcon} to="/statystyki" exact={false} />
-    </List>
-  </>
-);
+      <List component="nav">
+        <DrawerItem name="Jadłospis" icon={MenuIcon} to="/jadlospis" exact={false} />
+        <DrawerItem name="Placówki" icon={AgencyIcon} to="/placowki" exact={false} />
+        <DrawerItem name="Statystyki" icon={StatsIcon} to="/statystyki" exact={false} />
+      </List>
+    </>
+  );
+};

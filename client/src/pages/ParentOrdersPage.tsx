@@ -40,6 +40,10 @@ const Actions = styled(Paper)(({ theme }) => ({
 }));
 // #endregion
 
+/**
+ * Komponent podstrony zamówień rodzica
+ * @component
+ */
 export const ParentOrdersPage = () => {
   const [ordersPage, setOrdersPage] = useState(1);
   const [error] = useState('');

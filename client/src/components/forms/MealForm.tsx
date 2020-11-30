@@ -30,6 +30,9 @@ const ActionsContainer = styled('div')({
 });
 // #endregion
 
+/**
+ * Schemat walidacji formularza dodawania posiłku
+ */
 export const schema = z.object({
   description: z.string()
     .min(1, { message: 'Opis dania jest wymagany' })
@@ -39,15 +42,21 @@ export const schema = z.object({
   type: z.enum([...MEAL_TYPES]),
 });
 
-export const MealForm: FC<FormProps<NewMeal> & Stylable> = ({
-  onSubmit, error, form, ...props
-}) => {
+/**
+ * Formularz dodawania posiłku
+ * @param props Właściwości formularza
+ * @component
+ */
+export const MealForm: FC<FormProps<NewMeal> & Stylable> = props => {
+  const {
+    onSubmit, error, form, ...rest
+  } = props;
   const {
     handleSubmit, register, errors, formState, control,
   } = form;
 
   return (
-    <Form {...props} onSubmit={handleSubmit(onSubmit)}>
+    <Form {...rest} onSubmit={handleSubmit(onSubmit)}>
       <Collapse in={!!error}>
         {error && <Alert severity="error">{error}</Alert>}
       </Collapse>

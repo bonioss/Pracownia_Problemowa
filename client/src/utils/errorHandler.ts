@@ -1,6 +1,7 @@
 import { ApiError } from 'api';
 import { AxiosError } from 'axios';
 
+/** Funkcja do obsługi błędów */
 export const errorHandler = (
   err: unknown,
   mapper: (message?: string) => string,

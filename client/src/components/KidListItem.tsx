@@ -7,12 +7,21 @@ import { Kid } from 'api/kid';
 import React, { FC, useState } from 'react';
 import { ConfirmDialog } from 'components/ConfirmDialog';
 
-interface Props {
+/** Właściwości komponentu elementu listy dzieci */
+export interface Props {
+  /** Obiekt dziecka */
   data: Kid;
+  /** Funkcja uruchamiana przy usuwaniu */
   handleDelete: () => Promise<void>;
 }
 
-export const KidListItem: FC<Props> = ({ data, handleDelete }) => {
+/**
+ * Komponent elementu listy dzieci
+ * @param props Właściwości komponentu
+ * @component
+ */
+export const KidListItem: FC<Props> = props => {
+  const { data, handleDelete } = props;
   const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   return (

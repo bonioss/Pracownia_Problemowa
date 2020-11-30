@@ -49,6 +49,10 @@ const MealsListHeader = styled(GenericListHeader)({
 });
 // #endregion
 
+/**
+ * Komponent podstrony jadłospisu
+ * @component
+ */
 export const MenuPage = () => {
   const [selectedDate, selectDate] = useState(startOfDay(new Date()));
   const [page, setPage] = useState(1);

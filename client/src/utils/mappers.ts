@@ -5,6 +5,7 @@ import {
   FoodVariant, Noodles, Pasta, Food, FoodCroissant, Tea,
 } from 'mdi-material-ui';
 
+/** Funkcja zwracająca etykietę dla danego okresu zamówienia */
 export const periodLabel = (period: OrdersPeriod) => {
   switch (period) {
     case 'day': return 'codziennie';
@@ -19,6 +20,7 @@ export const periodLabel = (period: OrdersPeriod) => {
   }
 };
 
+/** Funkcja zwracająca etykietę i ikonę dla danego typu posiłku */
 export const mealLabelAndIcon = (mealType: MealType) => {
   switch (mealType) {
     case 'breakfast': return { Icon: FoodVariant, label: 'Śniadanie' };

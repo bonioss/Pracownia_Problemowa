@@ -7,20 +7,29 @@ import MenuIcon from '@material-ui/icons/RestaurantMenu';
 import { DrawerHeader } from './DrawerHeader';
 import { DrawerItem } from './DrawerItem';
 
-interface Props {
+export interface Props {
+  /** Obiekt użytkownika */
   user: AgencyUser;
 }
 
-export const AgencyDrawer: FC<Props> = ({ user }) => (
-  <>
-    <DrawerHeader name={user.name} />
+/**
+ * Panel boczny opiekuna placówki
+ * @param __namedParameters Właściwości panelu
+ * @component
+ */
+export const AgencyDrawer: FC<Props> = props => {
+  const { user } = props;
+  return (
+    <>
+      <DrawerHeader name={user.name} />
 
-    <Divider />
+      <Divider />
 
-    <List component="nav">
-      <DrawerItem name="Jadłospis" icon={MenuIcon} to="/jadlospis" exact={false} />
-      <DrawerItem name="Podopieczni" icon={TestIcon} to="/dzieci" exact={false} />
-      <DrawerItem name="Zamówienia" icon={OrdersIcon} to="/zamowienia" exact={false} />
-    </List>
-  </>
-);
+      <List component="nav">
+        <DrawerItem name="Jadłospis" icon={MenuIcon} to="/jadlospis" exact={false} />
+        <DrawerItem name="Podopieczni" icon={TestIcon} to="/dzieci" exact={false} />
+        <DrawerItem name="Zamówienia" icon={OrdersIcon} to="/zamowienia" exact={false} />
+      </List>
+    </>
+  );
+};

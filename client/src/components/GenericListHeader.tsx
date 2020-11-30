@@ -8,17 +8,26 @@ const Container = styled('div')({
   padding: 16,
 });
 
-interface Props {
+/** Właściwości szblonu nagłówka */
+export interface Props {
   title?: string;
 }
 
-export const GenericListHeader: FC<Props & Stylable> = ({ title, children, ...props }) => (
-  <div {...props}>
-    <Container>
-      {title && <Typography variant="h6">{title}</Typography>}
-      {children}
-    </Container>
+/**
+ * Komponent szablonu nagłówka listy
+ * @param props Właściwości komponentu
+ * @component
+ */
+export const GenericListHeader: FC<Props & Stylable> = props => {
+  const { title, children, ...rest } = props;
+  return (
+    <div {...rest}>
+      <Container>
+        {title && <Typography variant="h6">{title}</Typography>}
+        {children}
+      </Container>
 
-    <Divider />
-  </div>
-);
+      <Divider />
+    </div>
+  );
+};

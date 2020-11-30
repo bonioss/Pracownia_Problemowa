@@ -60,7 +60,11 @@ const SidebarContent = styled(getSidebarContent(styled))({
 });
 // #endregion
 
-const App = () => {
+/**
+ * Główny komponent aplikacji
+ * @component
+ */
+export const App = () => {
   const DrawerSidebar = getDrawerSidebar(styled);
   const { user } = useAuth();
   const setAuth = useSetAuth();

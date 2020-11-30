@@ -37,6 +37,10 @@ const AppLogo = styled(PracowniaPosilkow)({
 });
 // #endregion
 
+/**
+ * Komponent podstrony rejestracji
+ * @component
+ */
 export const RegisterPage = () => {
   const [register] = useRegister();
   const [formError, setError] = useState('');

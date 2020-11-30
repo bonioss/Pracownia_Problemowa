@@ -11,6 +11,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 // #region styles
 // #endregion
 
+/**
+ * Komponent podstrony dodawania agencji
+ * @component
+ */
 export const AddAgencyPage = () => {
   const form = useForm<NewAgency>({
     defaultValues: {

@@ -44,7 +44,7 @@ export const schema = z.object({
 })
   .refine(data => isAfter(data.summerTermEnd, data.winterTermEnd), {
     message: 'Data semestru letniego musi być późniejsza niż data semestru zimowego',
-    path: ['winterTermEnd'],
+    path: ['summerTermEnd'],
   });
 
 export const AddAgencyForm: FC<FormProps<NewAgency> & Stylable> = ({

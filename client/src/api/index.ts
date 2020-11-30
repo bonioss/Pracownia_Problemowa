@@ -60,10 +60,8 @@ api.interceptors.request.use(config => {
     });
   }
   if (config.data) {
-    console.log('DATA:', config.data);
     Object.keys(config.data).forEach(key => {
       const date = parseISO(config.data[key]);
-      console.log('KEY:', key, 'DATE:', date);
       if (isValid(date)) config.data[key] = format(date, 'yyyy-MM-dd');
       if (config.data[key] instanceof Date) {
         config.data[key] = format(config.data[key], 'yyyy-MM-dd');

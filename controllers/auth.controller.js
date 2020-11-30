@@ -104,7 +104,9 @@ const agency = await Agency.create({
 
 //create mail transporter
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: {
       user: process.env.CATERING_MAIL,
       pass: process.env.CATERING_MAIL_PASSWORD

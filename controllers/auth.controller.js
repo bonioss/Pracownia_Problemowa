@@ -102,25 +102,25 @@ const agency = await Agency.create({
   summerTermEnd: new Date(summerTermEnd)
 })
 
-//create mail transporter
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-      user: process.env.CATERING_MAIL,
-      pass: process.env.CATERING_MAIL_PASSWORD
-  },
-  sendMail: true
-});
+// //create mail transporter
+// const transporter = nodemailer.createTransport({
+//   service: 'gmail',
+//   auth: {
+//       user: process.env.CATERING_MAIL,
+//       pass: process.env.CATERING_MAIL_PASSWORD
+//   },
+//   sendMail: true
+// });
 
-const msg = {
-  from: `"Food Catering" <${process.env.CATERING_MAIL}>`, // sender address
-  to: `${email}`, // list of receivers
-  subject: "Password", // Subject line
-  text: `Your password: ${password}, Your Code: ${agencyCode}`, // plain text body
-}
+// const msg = {
+//   from: `"Food Catering" <${process.env.CATERING_MAIL}>`, // sender address
+//   to: `${email}`, // list of receivers
+//   subject: "Password", // Subject line
+//   text: `Your password: ${password}, Your Code: ${agencyCode}`, // plain text body
+// }
 
-//send mail
-const info = await transporter.sendMail(msg);
+// //send mail
+// const info = await transporter.sendMail(msg);
 
 const resData = await Agency.findById(agency._id).select('-_id -password -__v');
 res.status(200).json({

@@ -1,5 +1,5 @@
 import { api, ApiResponse } from 'api';
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 
 // #region types
 export type Role = 'agency' | 'parent' | 'admin';
@@ -45,6 +45,8 @@ export interface AgencyUser {
   name: string;
   agencyCode: string;
   ordersPeriod: OrdersPeriod;
+  winterTermEnd: Date;
+  summerTermEnd: Date;
 }
 
 export type User = AgencyUser | ParentUser | AdminUser;
@@ -53,6 +55,14 @@ export interface NewAgency {
   email: string;
   name: string;
   ordersPeriod: OrdersPeriod;
+  winterTermEnd: Date;
+  summerTermEnd: Date;
+}
+
+export interface NewKid {
+  firstName: string;
+  lastName: string;
+  agencyCode: string;
 }
 // #endregion
 
@@ -66,4 +76,14 @@ export const useRegister = () => useMutation(
 
 export const useAddAgency = () => useMutation(
   (data: NewAgency) => api.post<ApiResponse<AgencyUser>>('/auth/addAgency', data).then(res => res.data),
+);
+
+export const useAddKid = () => useMutation(
+  (data: NewKid) => api.post<ApiResponse<AgencyUser>>('/kid/agencyAddKid', data).then(res => res.data),
+);
+
+export const useMe = () => useQuery(
+  ['me'], () => api.get<ApiResponse<User>>('/auth/me').then(res => res.data), {
+    refetchOnWindowFocus: false,
+  },
 );

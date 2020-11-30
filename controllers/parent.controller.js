@@ -20,7 +20,13 @@ exports.addKid = asyncHandler(async (req, res, next) => {
     //add kid to parent
     const userEmail = req.user.email;
     const parent = await User.findOne({ email: userEmail });
+    const parents = await User.find({agencyCode: req.user.agencyCode});
     const parentKids = parent.kids;
+    for (p of parents) {
+      if(p.kids.includes(kid.id)) {
+        return next(new ErrorResponse('This kid is already added', 400));
+      } 
+    }
     //check if kid is not already added
     if (!parentKids.includes(kid.id)){
       parentKids.push(kid);

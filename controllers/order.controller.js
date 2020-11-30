@@ -35,12 +35,14 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
     const hd = new Holidays('PL');
     const user = req.user;
     let { startDate, orders, comments, holidays } = req.body;
-    startDate = new Date(startDate);
+    startDate = new Date(`${startDate} 01:00`);
+    console.log(startDate);
     let meals = [];
     let endDate = new Date(startDate);
     const kid = await Kid.findOne({kidCode: req.params.kidCode});
     const agency = await Agency.findOne({agencyCode: user.agencyCode});
-
+    let wallet = 0;
+    let userID = '';
     //check if date is proper
     if(startDate <= new Date (Date.now())) {
         return next (new ErrorResponse(`Please provide date later than today`, 409));
@@ -53,23 +55,34 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
 
     //check if agency or parent has choosen kid
     if(user.role === 'agency') {
-      const kids = await Kid.find({agencyCode: user.agencyCode});
-      let hasKid=false;
-      for(const k of kids) {
-          if(k.agencyCode===kid.agencyCode) {
-            hasKid = true;
-            break;
+        const kids = await Kid.find({agencyCode: user.agencyCode});
+        let hasKid=false;
+        for(const k of kids) {
+            if(k.agencyCode===kid.agencyCode) {
+              hasKid = true;
+              break;
+            }
+        
           }
-      }
-      if(!hasKid) {
-        return next (new ErrorResponse(`Kid with code ${req.params.kidCode} not found`, 404));
-      }
-    } else if(user.role==='parent') {
-        const parent = await User.findOne({email: user.email});
-        if(!parent.kids.includes(kid.id)) {
-            return next (new ErrorResponse(`Kid with code ${req.params.kidCode} not found`, 404));
+        if(!hasKid) {
+          return next (new ErrorResponse(`Kid with code ${req.params.kidCode} not found`, 404));
         }
-    }
+      
+      const parents = await User.find({agencyCode: user.agencyCode});      
+        for (const p of parents) {
+            if(p.kids.includes(kid.id)) {
+              wallet = p.wallet ;
+              userID = p._id;
+            }
+        }  
+      } else if(user.role==='parent') {
+          const parent = await User.findOne({email: user.email});
+          if(!parent.kids.includes(kid.id)) {
+              return next (new ErrorResponse(`Kid with code ${req.params.kidCode} not found`, 404));
+          }
+          wallet = parent.wallet;
+          userID = user.id;
+      }
 
     //check if order can start on choosen date
     const kidOrders = await Order.find({kidCode: req.params.kidCode});
@@ -102,7 +115,16 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
         for(m of meals) {
             finalPrice += m.price;
         }
-        if(user.wallet > 0) finalPrice -= user.wallet
+        if(wallet > 0) {
+            finalPrice -= wallet;
+            wallet = 0;
+            await User.updateOne({_id: userID}, {wallet: wallet});
+        }
+        if(finalPrice < 0) {
+            wallet -= finalPrice;
+            finalPrice -= finalPrice;
+            await User.updateOne({_id: userID}, {wallet: wallet});
+        }
         const order = await Order.create({
             agencyCode: user.agencyCode,
             kidCode: req.params.kidCode,
@@ -143,7 +165,16 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
     for(m of meals) {
         finalPrice += m.price;
     }
-    if(user.wallet > 0) finalPrice -= user.wallet
+    if(wallet > 0) {
+        finalPrice -= wallet;
+        wallet = 0;
+        await User.updateOne({_id: userID}, {wallet: wallet});
+    }
+    if(finalPrice < 0) {
+        wallet -= finalPrice;
+        finalPrice -= finalPrice;
+        await User.updateOne({_id: userID}, {wallet: wallet});
+    }
     const order = await Order.create({
         agencyCode: user.agencyCode,
         kidCode: req.params.kidCode,
@@ -193,7 +224,18 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
         for(m of meals) {
             finalPrice += m.price;
         }
-        if(user.wallet > 0) finalPrice -= user.wallet
+        if(wallet > 0) {
+            finalPrice -= wallet;
+            wallet = 0;
+            await User.updateOne({_id: userID}, {wallet: wallet});
+        }
+        if(finalPrice < 0) {
+            
+            wallet -= finalPrice;
+            console.log(wallet);
+            finalPrice -= finalPrice;
+            await User.updateOne({_id: userID}, {wallet: wallet});
+        }
         const order = await Order.create({
             agencyCode: user.agencyCode,
             kidCode: req.params.kidCode,
@@ -327,11 +369,12 @@ exports.getOrderById = asyncHandler(async(req, res, next) => {
     const endIndex = page * limit;
 
     const results = {};
-    let order = await Order.findById({_id: req.params.id});
+    let order = await Order.findById({_id: req.params.id}).populate({path: 'kid', select: 'firstName lastName -_id'})
     
     if(!order) {
-        return next(new ErrorResponse(`Order with code ${req.params.id} has not exist.`, 404))
+        return next(new ErrorResponse(`Order with code ${req.params.id} has not exist.`, 404));
     }
+    
     if (endIndex < order.meals.length) {
         results.next = {
           page: page + 1,
@@ -348,8 +391,9 @@ exports.getOrderById = asyncHandler(async(req, res, next) => {
 
     results.numberOfPages = Math.ceil(order.meals.length / limit);
     try {
-      order.meals =  order.meals.slice((page-1)*limit, page*limit);
-      results.results = order
+      order.meals =  order.meals.slice((page-1)*limit, page*limit); 
+      order.meals.sort((a, b) => new Date(a.date) - new Date(b.date)); 
+      results.results = order;
       res.paginatedResults = results
       next()
     } catch (e) {
@@ -460,7 +504,7 @@ exports.deleteMeal = asyncHandler(async (req, res, next) => {
     })
 });
 
-// @desc    Create order for choosen kid
+// @desc    Create order summery for choosen kid
 // @route   post /api/v1/orders/summary/:kidCode
 // @access  Private
 exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
@@ -472,7 +516,7 @@ exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
     let endDate = new Date(startDate);
     const kid = await Kid.findOne({kidCode: req.params.kidCode});
     const agency = await Agency.findOne({agencyCode: user.agencyCode});
-
+    let wallet = 0;
     //check if date is proper
     if(startDate <= new Date (Date.now())) {
         return next (new ErrorResponse(`Please provide date later than today`, 409));
@@ -492,15 +536,24 @@ exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
             hasKid = true;
             break;
           }
-      }
+      
+        }
       if(!hasKid) {
         return next (new ErrorResponse(`Kid with code ${req.params.kidCode} not found`, 404));
       }
+    
+    const parents = await User.find({agencyCode: user.agencyCode});      
+      for (const p of parents) {
+          if(p.kids.includes(kid.id)) {
+            wallet = p.wallet ;
+          }
+      }  
     } else if(user.role==='parent') {
         const parent = await User.findOne({email: user.email});
         if(!parent.kids.includes(kid.id)) {
             return next (new ErrorResponse(`Kid with code ${req.params.kidCode} not found`, 404));
         }
+        wallet = parent.wallet;
     }
 
     //check if order can start on choosen date
@@ -534,7 +587,12 @@ exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
         for(m of meals) {
             finalPrice += m.price;
         }
-        if(user.wallet > 0) finalPrice -= user.wallet
+        if(wallet > 0) {
+            finalPrice -= wallet;
+        }
+        if(finalPrice < 0) {
+            finalPrice -= finalPrice;
+        }
 
         res.status(200).json({
             success: true,
@@ -566,7 +624,12 @@ exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
     for(m of meals) {
         finalPrice += m.price;
     }
-    if(user.wallet > 0) finalPrice -= user.wallet
+    if(wallet > 0) {
+        finalPrice -= wallet;
+    }
+    if(finalPrice < 0) {
+        finalPrice -= finalPrice;
+    }
 
     res.status(200).json({
         success: true,
@@ -607,7 +670,12 @@ exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
         for(m of meals) {
             finalPrice += m.price;
         }
-        if(user.wallet > 0) finalPrice -= user.wallet
+        if(wallet > 0) {
+            finalPrice -= wallet;
+        }
+        if(finalPrice < 0) {
+            finalPrice -= finalPrice;
+        }
         
         res.status(200).json({
             success: true,
@@ -615,3 +683,97 @@ exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
         });
     }
 });
+
+// @desc    Get all kids for order
+// @route   GET /api/v1/orders/create/kids
+// @access  Private
+exports.getKidsForOrder = asyncHandler(async (req, res, next) => {
+    let kids = [];
+    //User parent
+    if (req.user.role === 'parent') {
+      const parent = await User.findOne({ _id: req.user._id });
+      kids = await Kid.find({ '_id':{ $in: parent.kids } }).select('-__v');
+    } else if (req.user.role === 'agency') { 
+      kids = await Kid.find({agencyCode: req.user.agencyCode}).select('-__v');; 
+    }
+    if(kids.length === 0) {
+        return next (new ErrorResponse(`Kids not found`, 404));
+    }
+    //Send response
+    res.status(200).json({
+      success: true,
+      data: kids
+    });
+  });
+
+// @desc    Get orders stats
+// @route   GET /api/v1/orders/stats?date=${date}
+// @access  Private, admin
+
+exports.getStats = asyncHandler(async (req, res, next) => {
+    let stats = [];
+    console.log(req.query.date);
+    let date = new Date(Date.now());
+    if(req.query.date !== undefined) 
+        date = new Date(req.query.date);
+        console.log(date);
+    const orders = await Order.find({'startDate': {"$lte" : date}, 'endDate': {"$gte": date}}).sort({agencyCode: 1});
+    console.log(orders);
+    let agency = '';
+    let breakfast = 0;
+    let lunch = 0;
+    let soup = 0;
+    let mainDish = 0;
+    let dinner = 0;
+    let teaTime = 0;
+    let name = {};
+    for(o of orders) {
+        if(agency !== o.agencyCode && agency !=='') {
+            if(breakfast + lunch + soup + mainDish + dinner + teaTime > 0) {
+                stats.push({
+                    agency: name.name,
+                    breakfast,
+                    lunch,
+                    soup,
+                    mainDish,
+                    dinner,
+                    teaTime
+                });  
+                breakfast = 0;
+                lunch = 0;
+                soup = 0;
+                mainDish = 0;
+                dinner = 0;
+                teaTime = 0;
+            }
+           }
+           agency = o.agencyCode;
+           name = await Agency.findOne({agencyCode: agency});
+           
+        for(m of o.meals) {
+            if (new Date(m.date.setHours(1, 0, 0, 0)).getTime() !== date.getTime()) continue;
+            if(m.type === 'breakfast') breakfast += 1;
+            else if(m.type === 'lunch') lunch += 1;
+            else if(m.type === 'soup') soup += 1;
+            else if(m.type === 'main dish') mainDish += 1;
+            else if(m.type === 'dinner') dinner += 1;
+            else if(m.type === 'tea time') teaTime += 1;
+        }
+    }
+    if(breakfast + lunch + soup + mainDish + dinner + teaTime > 0) {
+    stats.push({
+        agency: name.name,
+        breakfast,
+        lunch,
+        soup,
+        mainDish,
+        dinner,
+        teaTime
+    });
+    }
+    res.status(200).json({
+        success: true,
+        data: stats
+    })
+
+})

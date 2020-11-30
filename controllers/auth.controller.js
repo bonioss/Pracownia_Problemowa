@@ -73,8 +73,10 @@ let checkCrudentials={};
 checkCrudentials.user = await User.findOne({email});
 checkCrudentials.agency = await Agency.findOne({email});
 
-if(winterTermEnd <= new Date(Date.now()) || summerTermEnd <= new Date(Date.now())) {
+if(new Date(winterTermEnd) <= new Date(Date.now()) || new Date(summerTermEnd) <= new Date(Date.now())) {
   return next (new ErrorResponse(`Please provide date later than today`, 409));
+} else if (new Date(winterTermEnd) >= new Date(summerTermEnd)) {
+  return next (new ErrorResponse(`Summer term end must be later than winter one`, 409));
 }
 
   //check if mail is unique
@@ -89,7 +91,7 @@ const password = generator.generate({
 const agencyCode = shortid.generate();
 
 //create Agency
-console.log(winterTermEnd);
+
 const agency = await Agency.create({
   email,
   password,
@@ -149,7 +151,7 @@ res.status(200).json({
 // @desc    Register for parent
 // @route   POST /api/v1/auth/register
 // @access  Public
-exports.register=asyncHandler(async(req, res, next) => {
+exports.register = asyncHandler(async(req, res, next) => {
   try {
     const {email, password, firstName, lastName, agencyCode} = req.body;
   const agency = await Agency.findOne({agencyCode});
@@ -207,4 +209,19 @@ exports.register=asyncHandler(async(req, res, next) => {
     });
   }
   
-})
+});
+
+// @desc    Register for parent
+// @route   GET /api/v1/auth/me
+// @access  Public
+exports.getMe = asyncHandler( async(req, res, next) => {
+  let user = {};
+  if (req.user.role !== 'agency')
+    user = await User.findById({_id: req.user._id}).select('-kids -__v');
+  else 
+    user = await Agency.findById(({_id: req.user._id})).select('-__v');;  
+  res.status(200).json({
+    success: true,
+    data: user
+  });
+});

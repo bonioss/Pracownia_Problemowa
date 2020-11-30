@@ -50,7 +50,16 @@ const OrderSchema = new mongoose.Schema({
     endDate: {
         type: Date,
         default: Date.now
-    }
-})
+    },
+}, {toJSON: {
+    virtuals: true
+  }});
+
+OrderSchema.virtual('kid', {
+  ref: 'Kid',                  // model, którego chcemy użyć
+  localField: 'kidCode',           // znajdź talk gdzie 'localField'
+  foreignField: 'kidCode',        // jest równe 'foreignField'
+  justOne: true   
+});
 
 module.exports = mongoose.model('Order', OrderSchema);

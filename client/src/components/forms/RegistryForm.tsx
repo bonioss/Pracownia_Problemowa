@@ -1,11 +1,11 @@
 import {
   Button, Collapse, styled, TextField, withStyles,
 } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
+import { RegisterParams } from 'api/auth';
 import React, { FC } from 'react';
 import { FormProps, Stylable } from 'utils/types';
-import { RegisterParams } from 'api/auth';
 import * as z from 'zod';
-import Alert from '@material-ui/lab/Alert';
 
 // #region styles
 const Form = styled('form')({

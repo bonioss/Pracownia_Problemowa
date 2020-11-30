@@ -1,13 +1,13 @@
-import { Button, styled } from '@material-ui/core';
-import React, { useState } from 'react';
-import loginBackground from 'assets/login_background.jpg';
-import { RegistryForm, schema } from 'components/forms/RegistryForm';
-import { RegisterParams, useRegister } from 'api/auth';
-import { ReactComponent as PracowniaPosilkow } from 'assets/pracownia_posilkow.svg';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { errorHandler } from 'utils/errorHandler';
+import { styled } from '@material-ui/core';
+import { RegisterParams, useRegister } from 'api/auth';
+import loginBackground from 'assets/login_background.jpg';
+import { ReactComponent as PracowniaPosilkow } from 'assets/pracownia_posilkow.svg';
+import { RegistryForm, schema } from 'components/forms/RegistryForm';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
+import { errorHandler } from 'utils/errorHandler';
 
 // #region styles
 const Container = styled('div')({

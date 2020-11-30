@@ -7,7 +7,7 @@ import { useGetMyKid } from 'api/parent';
 import { GenericList } from 'components/GenericList';
 import { GenericListHeader } from 'components/GenericListHeader';
 import { PageWrapper } from 'components/PageWrapper';
-import React, { useState } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 
 // #region styles

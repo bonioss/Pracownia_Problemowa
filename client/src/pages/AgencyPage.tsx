@@ -9,7 +9,6 @@ import { PageWrapper } from 'components/PageWrapper';
 import React, { useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
 import { ConfirmDialog } from 'components/ConfirmDialog';
 import { errorHandler } from 'utils/errorHandler';
 import { Alert } from '@material-ui/lab';

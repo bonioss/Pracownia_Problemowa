@@ -46,6 +46,10 @@ interface AgencyPageParams {
   code: string;
 }
 
+/**
+ * Komponent podstrony informacji o placówce
+ * @component
+ */
 export const AgencyPage = () => {
   const { code } = useParams<AgencyPageParams>();
   const agency = useAgency(code);

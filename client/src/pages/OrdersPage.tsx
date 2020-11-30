@@ -38,6 +38,10 @@ const Actions = styled(Paper)(({ theme }) => ({
 }));
 // #endregion
 
+/**
+ * Komponent podstrony zamówień
+ * @component
+ */
 export const OrdersPage = () => {
   const { user } = useAuth();
   const [ordersPage, setOrdersPage] = useState(1);

@@ -13,5 +13,8 @@ const themeOptions: ThemeOptions = {
   },
 };
 
+/** Jasny motyw */
 export const lightTheme = createMuiTheme(deepmerge(themeOptions, { palette: { type: 'light' } }));
+
+/** Ciemny motyw */
 export const darkTheme = createMuiTheme(deepmerge(themeOptions, { palette: { type: 'dark' } }));

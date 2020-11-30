@@ -1,7 +1,9 @@
 import { User } from 'api/auth';
 import { createState } from 'utils/state';
 
+/** Stan uwierzytelnienia */
 export interface AuthState {
+  /** Obiekt użytkownika */
   user?: User;
 }
 

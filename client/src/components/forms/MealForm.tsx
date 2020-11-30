@@ -30,24 +30,32 @@ const ActionsContainer = styled('div')({
 });
 // #endregion
 
+/**
+ * Schemat walidacji formularza dodawania posiłku
+ */
 export const schema = z.object({
   description: z.string()
     .min(1, { message: 'Opis dania jest wymagany' })
     .max(256, { message: 'Opis dania musi być krótszy niż 100 znaków' }),
   date: z.date(),
-  price: z.number(),
   type: z.enum([...MEAL_TYPES]),
 });
 
-export const MealForm: FC<FormProps<NewMeal> & Stylable> = ({
-  onSubmit, error, form, ...props
-}) => {
+/**
+ * Formularz dodawania posiłku
+ * @param props Właściwości formularza
+ * @component
+ */
+export const MealForm: FC<FormProps<NewMeal> & Stylable> = props => {
+  const {
+    onSubmit, error, form, ...rest
+  } = props;
   const {
     handleSubmit, register, errors, formState, control,
   } = form;
 
   return (
-    <Form {...props} onSubmit={handleSubmit(onSubmit)}>
+    <Form {...rest} onSubmit={handleSubmit(onSubmit)}>
       <Collapse in={!!error}>
         {error && <Alert severity="error">{error}</Alert>}
       </Collapse>
@@ -109,26 +117,6 @@ export const MealForm: FC<FormProps<NewMeal> & Stylable> = ({
               />
             )}
             {...p}
-          />
-        )}
-      />
-
-      <Controller
-        name="price"
-        control={control}
-        render={({ onChange, ...p }) => (
-          <TextField
-            {...p}
-            id="meal-price"
-            label="Cena dania"
-            type="number"
-            variant="outlined"
-            margin="normal"
-            helperText={errors.price?.message || ''}
-            error={!!errors.price}
-            required
-            style={{ margin: '8px 0' }}
-            onChange={e => onChange(parseInt(e.target.value, 10))}
           />
         )}
       />

@@ -6,18 +6,31 @@ import {
 } from '@material-ui/core';
 import { Link as RouterLink, LinkProps as RouterLinkProps, useRouteMatch } from 'react-router-dom';
 
-interface Props {
+/** Właściwości elementu nawigacji */
+export interface Props {
+  /** Nazwa elementu */
   name: string;
+  /** Ikona elementu */
   icon: (props: SvgIconProps) => JSX.Element;
+  /** Adres docelowy */
   to: string;
+  /** Funkcja uruchamiana po kliknięciu */
   onClick?: () => void;
+  /** Flaga czy adres ma być porównywany dokładnie */
   exact?: boolean;
+  /** Flaga czy element ma być wyłączony */
   disabled?: boolean;
 }
 
-export const DrawerItem: FC<Props> = ({
-  name, icon: Icon, to, onClick, exact = true, disabled,
-}): ReactElement => {
+/**
+ * Komponent elementu nawigacyjnego
+ * @param props Właściwości komponentu
+ * @component
+ */
+export const DrawerItem: FC<Props> = (props): ReactElement => {
+  const {
+    name, icon: Icon, to, onClick, exact = true, disabled,
+  } = props;
   const match = useRouteMatch({ path: to, exact });
 
   const renderLink = React.useMemo(

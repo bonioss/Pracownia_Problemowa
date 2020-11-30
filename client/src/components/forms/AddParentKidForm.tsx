@@ -27,20 +27,29 @@ const ActionsContainer = styled('div')({
 });
 // #endregion
 
+/**
+ * Schemat walidacji formularza przypisywania dziecka do rodzica
+ */
 export const schema = z.object({
   kidCode: z.string()
     .min(4, { message: 'Kod dziecka jest wymagany' }),
 });
 
-export const AddParentKidForm: FC<FormProps<Parent> & Stylable> = ({
-  onSubmit, error, form, ...props
-}) => {
+/**
+ * Formularz przypisywania dziecka do rodzica
+ * @param props Właściwości formularza
+ * @component
+ */
+export const AddParentKidForm: FC<FormProps<Parent> & Stylable> = props => {
+  const {
+    onSubmit, error, form, ...rest
+  } = props;
   const {
     handleSubmit, register, errors, formState,
   } = form;
 
   return (
-    <Form {...props} onSubmit={handleSubmit(onSubmit)}>
+    <Form {...rest} onSubmit={handleSubmit(onSubmit)}>
       <Collapse in={!!error}>
         {error && <Alert severity="error">{error}</Alert>}
       </Collapse>

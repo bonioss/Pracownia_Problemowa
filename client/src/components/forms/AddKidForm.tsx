@@ -27,6 +27,9 @@ const ActionsContainer = styled('div')({
 });
 // #endregion
 
+/**
+ * Schemat walidacji formularza dodawania podopiecznego
+ */
 export const schema = z.object({
   firstName: z.string()
     .min(3, { message: 'Imię jest wymagane' }),
@@ -36,15 +39,21 @@ export const schema = z.object({
     .min(4, { message: 'Kod jest wymagany' }),
 });
 
-export const AddKidForm: FC<FormProps<NewKid> & Stylable> = ({
-  onSubmit, error, form, ...props
-}) => {
+/**
+ * Formularz dodawania podopiecznego
+ * @param props Właściwości formularza
+ * @component
+ */
+export const AddKidForm: FC<FormProps<NewKid> & Stylable> = props => {
+  const {
+    onSubmit, error, form, ...rest
+  } = props;
   const {
     handleSubmit, register, errors, formState,
   } = form;
 
   return (
-    <Form {...props} onSubmit={handleSubmit(onSubmit)}>
+    <Form {...rest} onSubmit={handleSubmit(onSubmit)}>
       <Collapse in={!!error}>
         {error && <Alert severity="error">{error}</Alert>}
       </Collapse>

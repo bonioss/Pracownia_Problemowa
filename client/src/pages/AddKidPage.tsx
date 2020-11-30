@@ -11,6 +11,10 @@ import { errorHandler } from 'utils/errorHandler';
 // #region styles
 // #endregion
 
+/**
+ * Komponent podstrony dodawania podopiecznego
+ * @component
+ */
 export const AddKidPage = () => {
   const form = useForm<NewKid>({
     defaultValues: {

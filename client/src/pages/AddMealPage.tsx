@@ -12,12 +12,15 @@ import { startOfDay } from 'date-fns';
 // #region styles
 // #endregion
 
+/**
+ * Komponent podstrony dodawania posiłku
+ * @component
+ */
 export const AddMealPage = () => {
   const form = useForm<NewMeal>({
     defaultValues: {
       date: startOfDay(new Date()),
       description: '',
-      price: 0,
       type: 'breakfast',
     },
     resolver: zodResolver(schema),

@@ -3,47 +3,72 @@ import axios from 'axios';
 import { format, isValid, parseISO } from 'date-fns';
 
 export interface ApiError {
+  /** Wiadomość błędu */
   error: string;
+  /** Flaga success w przypadku błędu */
   success: false;
 }
 
 export interface ApiResponse<T = undefined> {
+  /** Obiekt z pobranymi danymi */
   data: T;
+  /** Flaga sukcesu */
   success: true;
 }
 
 export interface PaginatedApiResponse<T> {
+  /** Obiekt z pobranymi danymi */
   data: {
+    /** Dane paginacji kolejnej strony */
     next?: {
+      /** Numer kolejnej strony */
       page: number;
+      /** Limit elementów na stronie */
       limit: number;
     };
+    /** Dane paginacji poprzedniej strony */
     prev?: {
+      /** Numer strony */
       page: number;
+      /** Limit elementów na stronie */
       limit: number;
     };
+    /** Liczba stron */
     numberOfPages: number;
+    /** Dane */
     results: T[];
   };
+  /** Flaga sukcesu */
   success: true;
 }
 
 export interface AltPaginatedApiResponse<T> {
+  /** Obiekt z pobranymi danymi */
   data: {
+    /** Dane paginacji kolejnej strony */
     next?: {
+      /** Numer kolejnej strony */
       page: number;
+      /** Limit elementów na stronie */
       limit: number;
     };
+    /** Dane paginacji poprzedniej strony */
     prev?: {
+      /** Numer strony */
       page: number;
+      /** Limit elementów na stronie */
       limit: number;
     };
+    /** Liczba stron */
     numberOfPages: number;
+    /** Dane */
     results: T;
   };
+  /** Flaga sukcesu */
   success: true;
 }
 
+/** Klient API */
 export const api = axios.create({
   baseURL: '/api/v1/',
   headers: {

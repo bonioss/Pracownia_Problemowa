@@ -12,24 +12,36 @@ const Details = styled('div')({
 });
 // #endregion
 
-interface Props {
+/** Właściwości nagłówka panelu bocznego */
+export interface Props {
+  /** Pierwsza linia tekstu */
   name?: string;
+  /** Adres email */
   email?: string;
+  /** Druga linia tekstu */
   text?: string;
 }
 
-export const DrawerHeader: FC<Props> = ({
-  name, email, text,
-}): ReactElement => (
-  <>
-    <Container>
-      <Grid container direction="row" alignItems="center">
-        <Details>
-          <Typography variant="h6" noWrap>{name}</Typography>
-          <Typography color="textSecondary" noWrap gutterBottom>{email}</Typography>
-          {text && <Typography color="textSecondary" noWrap gutterBottom>{text}</Typography>}
-        </Details>
-      </Grid>
-    </Container>
-  </>
-);
+/**
+ * Komponent nagłówka panelu bocznego
+ * @param props Właściwości nagłówka
+ * @component
+ */
+export const DrawerHeader: FC<Props> = (props): ReactElement => {
+  const {
+    name, email, text,
+  } = props;
+  return (
+    <>
+      <Container>
+        <Grid container direction="row" alignItems="center">
+          <Details>
+            <Typography variant="h6" noWrap>{name}</Typography>
+            <Typography color="textSecondary" noWrap gutterBottom>{email}</Typography>
+            {text && <Typography color="textSecondary" noWrap gutterBottom>{text}</Typography>}
+          </Details>
+        </Grid>
+      </Container>
+    </>
+  );
+};

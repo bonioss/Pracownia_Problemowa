@@ -32,42 +32,60 @@ const EmptyContainer = styled('div')({
 });
 // #endregion
 
-interface Props {
+/** Właściwości listy */
+export interface Props {
+  /** Elementy listy */
   items: ReactNode;
+  /** Nagłówek listy */
   header?: ReactNode;
+  /** Informacje o paginacji */
   pagination?: {
+    /** Liczba stron */
     count: number;
+    /** Aktualna strona */
     page: number;
+    /** Funkcja uruchamiana po zmianie strony */
     onPageChange: (event: ChangeEvent<unknown>, page: number) => void;
   };
+  /** Tytuł listy */
   title?: string;
+  /** Flaga czy lista się ładuje */
   loading?: boolean;
+  /** Tekst wyświetlany przy pustej liście */
   emptyText?: string;
 }
 
-export const GenericList: FC<Props & Stylable> = ({
-  items, header, pagination, title, loading, emptyText, ...props
-}) => (
-  <Paper {...props}>
-    <StyledList>
-      {header || (title && <GenericListHeader title={title} />)}
+/**
+ * Komponent szablonu listy
+ * @param props Właściwości komponentu
+ * @component
+ */
+export const GenericList: FC<Props & Stylable> = props => {
+  const {
+    items, header, pagination, title, loading, emptyText, ...rest
+  } = props;
+  return (
+    <Paper {...rest}>
+      <StyledList>
+        {header || (title && <GenericListHeader title={title} />)}
 
-      {loading && <LinearProgress />}
+        {loading && <LinearProgress />}
 
-      {(Array.isArray(items) && items.length === 0) ? (
-        <EmptyContainer>
-          <Typography>{emptyText || 'Brak wyników'}</Typography>
-        </EmptyContainer>
-      ) : items}
-    </StyledList>
+        {(Array.isArray(items) && items.length === 0) ? (
+          <EmptyContainer>
+            <Typography>{emptyText || 'Brak wyników'}</Typography>
+          </EmptyContainer>
+        ) : items}
+      </StyledList>
 
-    {pagination && (
+      {pagination && (
       <StyledPagination
         page={pagination.page}
         count={pagination.count}
         onChange={pagination.onPageChange}
         shape="rounded"
       />
-    )}
-  </Paper>
-);
+      )}
+    </Paper>
+  );
+};

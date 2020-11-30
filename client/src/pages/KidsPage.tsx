@@ -18,6 +18,10 @@ const KidsList = styled(GenericList)({
 });
 // #endregion
 
+/**
+ * Komponent podstrony listy dzieci
+ * @component
+ */
 export const KidsPage = () => {
   const history = useHistory();
   const [page, setPage] = useState(1);

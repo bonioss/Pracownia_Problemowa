@@ -9,6 +9,10 @@ const Container = styled('div')({
   height: '100vh',
 });
 
+/**
+ * Komponent pustej podstrony
+ * @component
+ */
 export const EmptyPage = () => (
   <PageWrapper title="Strona nie istnieje">
     <Container>

@@ -24,4 +24,18 @@
   "include": [
     "src"
   ],
+  "typedocOptions": {
+    "mode": "modules",
+    "out": "docs",
+    "entryPoints": [
+      "src/api",
+      "src/components",
+      "src/pages",
+      "src/utils",
+      "src/index.tsx",
+      "src/theme.ts",
+    ],
+    "categorizeByGroup": true,
+    "excludeNotExported": true
+  }
 }

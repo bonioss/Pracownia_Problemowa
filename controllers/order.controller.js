@@ -35,7 +35,7 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
     const hd = new Holidays('PL');
     const user = req.user;
     let { startDate, orders, comments, holidays } = req.body;
-    startDate = new Date(`${startDate} 01:00`);
+    startDate = new Date(`${startDate}T02:00:00`);
     console.log(startDate);
     let meals = [];
     let endDate = new Date(startDate);

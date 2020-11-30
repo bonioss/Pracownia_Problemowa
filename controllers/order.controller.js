@@ -111,6 +111,8 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
         if(meals.length===0) {
             return next (new ErrorResponse(`Please provide some meal`, 409)); 
         }
+
+
         let finalPrice = 0;
         for(m of meals) {
             finalPrice += m.price;
@@ -587,16 +589,19 @@ exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
         for(m of meals) {
             finalPrice += m.price;
         }
-        if(wallet > 0) {
-            finalPrice -= wallet;
-        }
-        if(finalPrice < 0) {
-            finalPrice -= finalPrice;
-        }
+        // if(wallet > 0) {
+        //     finalPrice -= wallet;
+        // }
+        // if(finalPrice < 0) {
+        //     finalPrice -= finalPrice;
+        // }
 
         res.status(200).json({
             success: true,
-            data: finalPrice
+            data: {
+                price: finalPrice,
+                wallet
+            }
         });
     }
     else if(agency.ordersPeriod === 'week') {
@@ -624,16 +629,19 @@ exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
     for(m of meals) {
         finalPrice += m.price;
     }
-    if(wallet > 0) {
-        finalPrice -= wallet;
-    }
-    if(finalPrice < 0) {
-        finalPrice -= finalPrice;
-    }
+    // if(wallet > 0) {
+    //     finalPrice -= wallet;
+    // }
+    // if(finalPrice < 0) {
+    //     finalPrice -= finalPrice;
+    // }
 
     res.status(200).json({
         success: true,
-        data: finalPrice
+        data: {
+            price: finalPrice,
+            wallet
+        }
     });
     }
     if(agency.ordersPeriod === 'month' || agency.ordersPeriod ==='semestr') {
@@ -670,16 +678,19 @@ exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
         for(m of meals) {
             finalPrice += m.price;
         }
-        if(wallet > 0) {
-            finalPrice -= wallet;
-        }
-        if(finalPrice < 0) {
-            finalPrice -= finalPrice;
-        }
+        // if(wallet > 0) {
+        //     finalPrice -= wallet;
+        // }
+        // if(finalPrice < 0) {
+        //     finalPrice -= finalPrice;
+        // }
         
         res.status(200).json({
             success: true,
-            data: finalPrice
+            data: {
+                price: finalPrice,
+                wallet
+            }
         });
     }
 });
@@ -735,9 +746,9 @@ exports.getStats = asyncHandler(async (req, res, next) => {
                     breakfast,
                     lunch,
                     soup,
-                    mainDish,
+                    'main dish': mainDish,
                     dinner,
-                    teaTime
+                    'tea time': teaTime
                 });  
                 breakfast = 0;
                 lunch = 0;
@@ -766,9 +777,9 @@ exports.getStats = asyncHandler(async (req, res, next) => {
         breakfast,
         lunch,
         soup,
-        mainDish,
+        'main dish': mainDish,
         dinner,
-        teaTime
+        'tea time': teaTime
     });
     }
     res.status(200).json({

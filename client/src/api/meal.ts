@@ -21,7 +21,7 @@ export interface Meal {
   price: number;
 }
 
-export type NewMeal = Omit<Meal, '_id'>;
+export type NewMeal = Omit<Meal, '_id' | 'price'>;
 
 /**
  * Hook do pobierania listy posiłków

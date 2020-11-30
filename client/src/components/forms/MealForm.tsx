@@ -38,7 +38,6 @@ export const schema = z.object({
     .min(1, { message: 'Opis dania jest wymagany' })
     .max(256, { message: 'Opis dania musi być krótszy niż 100 znaków' }),
   date: z.date(),
-  price: z.number(),
   type: z.enum([...MEAL_TYPES]),
 });
 
@@ -118,26 +117,6 @@ export const MealForm: FC<FormProps<NewMeal> & Stylable> = props => {
               />
             )}
             {...p}
-          />
-        )}
-      />
-
-      <Controller
-        name="price"
-        control={control}
-        render={({ onChange, ...p }) => (
-          <TextField
-            {...p}
-            id="meal-price"
-            label="Cena dania"
-            type="number"
-            variant="outlined"
-            margin="normal"
-            helperText={errors.price?.message || ''}
-            error={!!errors.price}
-            required
-            style={{ margin: '8px 0' }}
-            onChange={e => onChange(parseInt(e.target.value, 10))}
           />
         )}
       />

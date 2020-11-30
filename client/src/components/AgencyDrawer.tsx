@@ -18,9 +18,9 @@ export const AgencyDrawer: FC<Props> = ({ user }) => (
     <Divider />
 
     <List component="nav">
-      <DrawerItem name="Jadłospis" icon={MenuIcon} to="/jadlospis" />
-      <DrawerItem name="Podopieczni" icon={TestIcon} to="/dzieci" />
-      <DrawerItem name="Zamówienia" icon={OrdersIcon} to="/zamowienia" />
+      <DrawerItem name="Jadłospis" icon={MenuIcon} to="/jadlospis" exact={false} />
+      <DrawerItem name="Podopieczni" icon={TestIcon} to="/dzieci" exact={false} />
+      <DrawerItem name="Zamówienia" icon={OrdersIcon} to="/zamowienia" exact={false} />
     </List>
   </>
 );

@@ -1,4 +1,6 @@
+/* eslint-disable no-param-reassign */
 import axios from 'axios';
+import { format, isValid, parseISO } from 'date-fns';
 
 export interface ApiError {
   error: string;
@@ -49,3 +51,22 @@ export const api = axios.create({
   },
   withCredentials: true,
 });
+
+api.interceptors.request.use(config => {
+  if (config.params) {
+    Object.keys(config.params).forEach(key => {
+      const date = parseISO(config.params[key]);
+      if (isValid(date)) config.params[key] = format(date, 'yyyy-MM-dd');
+    });
+  }
+  if (config.data) {
+    Object.keys(config.data).forEach(key => {
+      const date = parseISO(config.data[key]);
+      if (isValid(date)) config.data[key] = format(date, 'yyyy-MM-dd');
+      if (config.data[key] instanceof Date) {
+        config.data[key] = format(config.data[key], 'yyyy-MM-dd');
+      }
+    });
+  }
+  return config;
+}, error => error);

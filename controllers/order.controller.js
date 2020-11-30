@@ -35,7 +35,7 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
     const hd = new Holidays('PL');
     const user = req.user;
     let { startDate, orders, comments, holidays } = req.body;
-    startDate = new Date(`${startDate} 01:00`);
+    startDate = new Date(`${startDate}T00:00:00`);
     console.log(startDate);
     let meals = [];
     let endDate = new Date(startDate);
@@ -111,6 +111,8 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
         if(meals.length===0) {
             return next (new ErrorResponse(`Please provide some meal`, 409)); 
         }
+
+
         let finalPrice = 0;
         for(m of meals) {
             finalPrice += m.price;
@@ -292,10 +294,10 @@ exports.getOrdersByAgencyCode = asyncHandler(async(req, res, next) => {
         .skip(startIndex)
         .select('-meals -__v')
         .exec()
-      res.paginatedResults = results
-      next()
+      res.paginatedResults = results;
+      next();
     } catch (e) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,  
         error: e.message 
     })
@@ -344,10 +346,10 @@ exports.getOrdersByKidCode = asyncHandler(async(req, res, next) => {
         .skip(startIndex)
         .select('-meals -__v')
         .exec()
-      res.paginatedResults = results
-      next()
+      res.paginatedResults = results;
+      next();
     } catch (e) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,  
         error: e.message 
     })
@@ -397,7 +399,7 @@ exports.getOrderById = asyncHandler(async(req, res, next) => {
       res.paginatedResults = results
       next()
     } catch (e) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,  
         error: e.message 
     })
@@ -587,16 +589,19 @@ exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
         for(m of meals) {
             finalPrice += m.price;
         }
-        if(wallet > 0) {
-            finalPrice -= wallet;
-        }
-        if(finalPrice < 0) {
-            finalPrice -= finalPrice;
-        }
+        // if(wallet > 0) {
+        //     finalPrice -= wallet;
+        // }
+        // if(finalPrice < 0) {
+        //     finalPrice -= finalPrice;
+        // }
 
         res.status(200).json({
             success: true,
-            data: finalPrice
+            data: {
+                price: finalPrice,
+                wallet
+            }
         });
     }
     else if(agency.ordersPeriod === 'week') {
@@ -624,16 +629,19 @@ exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
     for(m of meals) {
         finalPrice += m.price;
     }
-    if(wallet > 0) {
-        finalPrice -= wallet;
-    }
-    if(finalPrice < 0) {
-        finalPrice -= finalPrice;
-    }
+    // if(wallet > 0) {
+    //     finalPrice -= wallet;
+    // }
+    // if(finalPrice < 0) {
+    //     finalPrice -= finalPrice;
+    // }
 
     res.status(200).json({
         success: true,
-        data: finalPrice
+        data: {
+            price: finalPrice,
+            wallet
+        }
     });
     }
     if(agency.ordersPeriod === 'month' || agency.ordersPeriod ==='semestr') {
@@ -670,16 +678,19 @@ exports.getPriceForOrder = asyncHandler(async (req, res, next) => {
         for(m of meals) {
             finalPrice += m.price;
         }
-        if(wallet > 0) {
-            finalPrice -= wallet;
-        }
-        if(finalPrice < 0) {
-            finalPrice -= finalPrice;
-        }
+        // if(wallet > 0) {
+        //     finalPrice -= wallet;
+        // }
+        // if(finalPrice < 0) {
+        //     finalPrice -= finalPrice;
+        // }
         
         res.status(200).json({
             success: true,
-            data: finalPrice
+            data: {
+                price: finalPrice,
+                wallet
+            }
         });
     }
 });
@@ -712,13 +723,10 @@ exports.getKidsForOrder = asyncHandler(async (req, res, next) => {
 
 exports.getStats = asyncHandler(async (req, res, next) => {
     let stats = [];
-    console.log(req.query.date);
     let date = new Date(Date.now());
     if(req.query.date !== undefined) 
         date = new Date(req.query.date);
-        console.log(date);
     const orders = await Order.find({'startDate': {"$lte" : date}, 'endDate': {"$gte": date}}).sort({agencyCode: 1});
-    console.log(orders);
     let agency = '';
     let breakfast = 0;
     let lunch = 0;
@@ -735,9 +743,9 @@ exports.getStats = asyncHandler(async (req, res, next) => {
                     breakfast,
                     lunch,
                     soup,
-                    mainDish,
+                    'main dish': mainDish,
                     dinner,
-                    teaTime
+                    'tea time': teaTime
                 });  
                 breakfast = 0;
                 lunch = 0;
@@ -766,9 +774,9 @@ exports.getStats = asyncHandler(async (req, res, next) => {
         breakfast,
         lunch,
         soup,
-        mainDish,
+        'main dish': mainDish,
         dinner,
-        teaTime
+        'tea time': teaTime
     });
     }
     res.status(200).json({

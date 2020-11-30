@@ -66,10 +66,10 @@ exports.agencyGetKids = asyncHandler(async (req, res, next) => {
   results.numberOfPages = Math.ceil(count / limit);
   try {
     results.results = await Kid.find({agencyCode: req.user.agencyCode}).limit(limit).skip(startIndex).select('-_id -__v').exec()
-    res.paginatedResults = results
-    next()
+    res.paginatedResults = results;
+    next();
   } catch (e) {
-    res.status(500).json({
+    return res.status(500).json({
       success: false,  
       error: e.message 
   })
@@ -98,8 +98,8 @@ exports.agencyDeleteKid = asyncHandler(async (req, res, next) => {
   const parents = await User.find({ role:"parent", agencyCode: req.user.agencyCode });
 
   parents.forEach(function(parent) {
-    parent.kids.pop(kid)
-    parent.save()
+    parent.kids.pop(kid);
+    parent.save();
   })
 
   await kid.remove();

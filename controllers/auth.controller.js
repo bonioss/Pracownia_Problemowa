@@ -66,8 +66,8 @@ exports.login = asyncHandler(async (req, res, next) => {
 // @route   POST /api/v1/auth/addAgency
 // @access  Private, admin
 exports.addAgency = asyncHandler(async (req, res, next)=>{
-  try {
-    const {email, name, ordersPeriod, winterTermEnd, summerTermEnd} = req.body;
+try {
+  const {email, name, ordersPeriod, winterTermEnd, summerTermEnd} = req.body;
 
 let checkCrudentials={};
 checkCrudentials.user = await User.findOne({email});
@@ -127,7 +127,7 @@ res.status(200).json({
   success:true,
   data: resData
 });
-  } catch (error) {
+} catch (error) {
     if (error.name === 'ValidationError') {
       let errors = {};
       Object.keys(error.errors).forEach((key) => {
@@ -139,9 +139,9 @@ res.status(200).json({
       }
       return res.status(400).send(resp);
     }
-    res.status(500).send({
+    return res.status(500).send({
       success: false,
-      error: "Something went wrong"
+      error: error
     });
   }
 
@@ -203,7 +203,7 @@ exports.register = asyncHandler(async(req, res, next) => {
       }
       return res.status(400).send(resp);
     }
-    res.status(500).send({
+    return res.status(500).send({
       success: false,
       error: "Something went wrong"
     });
@@ -219,7 +219,7 @@ exports.getMe = asyncHandler( async(req, res, next) => {
   if (req.user.role !== 'agency')
     user = await User.findById({_id: req.user._id}).select('-kids -__v');
   else 
-    user = await Agency.findById(({_id: req.user._id})).select('-__v');;  
+    user = await Agency.findById(({_id: req.user._id})).select('-__v');  
   res.status(200).json({
     success: true,
     data: user

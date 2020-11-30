@@ -32,19 +32,19 @@ exports.getMyAgencies = asyncHandler(async (req, res, next) => {
     
     results.numberOfPages = Math.ceil(count / limit);
     try {
-      results.results = await Agency.find().limit(limit).skip(startIndex).select('-_id -__v').exec()
-      res.paginatedResults = results
-      next()
+      results.results = await Agency.find().limit(limit).skip(startIndex).select('-_id -__v').exec();
+      res.paginatedResults = results;
+      res.status(200).json({
+        success: true,
+        data: res.paginatedResults
+    });
     } catch (e) {
-      res.status(500).json({
+      return res.status(500).json({
         success: false,  
         error: e.message 
     })
     }
-    res.status(200).json({
-        success: true,
-        data: res.paginatedResults
-    });
+
 
 });
 
@@ -53,7 +53,6 @@ exports.getMyAgencies = asyncHandler(async (req, res, next) => {
 // @access  Private, admin
 exports.getAgency = asyncHandler(async (req, res, next) => {
     let agency = await Agency.findOne({agencyCode: req.params.agencyCode}).select('-_id -password -__v'); 
-    console.log(req.user.role);
     if(!agency) {
         return next(new ErrorResponse(`Agency with code ${req.params.agencyCode} does not exist.`, 401))
     }

@@ -9,7 +9,6 @@ import { PageWrapper } from 'components/PageWrapper';
 import React, { useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
 import { ConfirmDialog } from 'components/ConfirmDialog';
 import { errorHandler } from 'utils/errorHandler';
 import { Alert } from '@material-ui/lab';
@@ -86,17 +85,6 @@ export const AgencyPage = () => {
         <Button
           variant="contained"
           color="primary"
-          startIcon={<EditIcon />}
-          onClick={() => {
-            if (agency.data) history.push(`/placowki/edytuj/${agency.data.agencyCode}`);
-          }}
-          disabled
-        >Edytuj
-        </Button>
-
-        <Button
-          variant="contained"
-          color="primary"
           startIcon={<DeleteIcon />}
           onClick={() => setDeleteDialogOpen(true)}
         >Usuń
@@ -108,6 +96,7 @@ export const AgencyPage = () => {
         loading={orders.isFetching}
         items={orders.resolvedData?.results.map(order => (
           <OrderListItem
+            key={order._id}
             data={order}
             onClick={() => history.push(`/zamowienia/${order._id}`)}
           />

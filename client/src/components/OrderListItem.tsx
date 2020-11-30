@@ -1,10 +1,10 @@
 import {
   ListItem, ListItemAvatar, Avatar, ListItemText,
 } from '@material-ui/core';
-import AgencyIcon from '@material-ui/icons/Business';
 import { Order } from 'api/orders';
 import React, { FC } from 'react';
 import { format } from 'utils/dateFns';
+import OrdersIcon from '@material-ui/icons/ListAlt';
 
 interface Props {
   data: Order;
@@ -15,7 +15,7 @@ export const OrderListItem: FC<Props> = ({ data, onClick }) => (
   <ListItem button onClick={onClick}>
     <ListItemAvatar>
       <Avatar>
-        <AgencyIcon />
+        <OrdersIcon />
       </Avatar>
     </ListItemAvatar>
 

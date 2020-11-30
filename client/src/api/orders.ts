@@ -4,7 +4,7 @@ import {
 import {
   queryCache, useMutation, usePaginatedQuery, useQuery,
 } from 'react-query';
-import { FetchParams } from './agencies';
+import { Agency, FetchParams } from './agencies';
 import { OrdersPeriod } from './auth';
 import { Kid } from './kid';
 import { Meal, MealType } from './meal';
@@ -58,6 +58,15 @@ export interface RemoveMealParams {
   mealId: string;
 }
 
+export type OrdersStats = {
+  agency: Agency['name'];
+} & Record<Meal['type'], number>;
+
+export interface OrderSummary {
+  price: number;
+  wallet: number;
+}
+
 export type OrderMeal = Omit<Meal, 'description'>;
 // #endregion
 
@@ -69,7 +78,7 @@ export const useEarliestOrderDate = (kidCode?: string) => (
 
 export const useGetOrderPrice = () => useMutation(
   ({ kidCode, ...params }: OrderParams & {kidCode: string}) => (
-    api.post<ApiResponse<number>>(`/orders/summary/${kidCode}`, params).then(res => res.data)
+    api.post<ApiResponse<OrderSummary>>(`/orders/summary/${kidCode}`, params).then(res => res.data)
   ),
 );
 
@@ -117,5 +126,11 @@ export const useRemoveMeal = () => useMutation(
 export const useAllKids = () => (
   useQuery(['kids'], () => (
     api.get<ApiResponse<Kid[]>>('/orders/create/kids').then(res => res.data.data)
+  ))
+);
+
+export const useOrdersStats = (statsDate: Date) => (
+  useQuery(['stats', statsDate], (date: Date) => (
+    api.get<ApiResponse<OrdersStats[]>>('/orders/stats/summary', { params: { date } }).then(res => res.data.data)
   ))
 );

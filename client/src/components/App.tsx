@@ -20,7 +20,7 @@ import { OrdersPage } from 'pages/OrdersPage';
 import { ParentKidsPage } from 'pages/ParentKidsPage';
 import { ParentOrdersPage } from 'pages/ParentOrdersPage';
 import { PlaceOrderPage } from 'pages/PlaceOrderPage';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ReactQueryConfig, ReactQueryConfigProvider } from 'react-query';
 import { lightTheme, darkTheme } from 'theme';
 import { useAuth, useSetAuth } from 'utils/authState';
@@ -33,12 +33,12 @@ import {
 } from 'react-router-dom';
 import DateFnsUtils from '@material-ui/pickers/adapter/date-fns';
 import layout from 'utils/layout';
-import { useMe } from 'api/auth';
 import { AdminDrawer } from './AdminDrawer';
 import { AgencyDrawer } from './AgencyDrawer';
 import { DrawerItem } from './DrawerItem';
 import { GuardedRoute } from './GuardedRoute';
 import { ParentDrawer } from './ParentDrawer';
+import { UserChecker } from './UserChecker';
 
 // #region styles
 const Container = styled('div')(({ theme }) => ({
@@ -63,11 +63,6 @@ const App = () => {
   const DrawerSidebar = getDrawerSidebar(styled);
   const { user } = useAuth();
   const setAuth = useSetAuth();
-  const me = useMe();
-
-  useEffect(() => {
-    if (me.data) setAuth({ user: me.data?.data });
-  }, [me]);
 
   const reactQueryConfig: ReactQueryConfig = React.useMemo(() => ({
     queries: {
@@ -86,6 +81,7 @@ const App = () => {
 
   return (
     <ReactQueryConfigProvider config={reactQueryConfig}>
+      <UserChecker />
       <LocalizationProvider dateAdapter={DateFnsUtils} locale={pl}>
         <Container>
           <CssBaseline />

@@ -37,7 +37,7 @@ export const KidsPage = () => {
             <div style={{ flex: 1 }} />
             <Button
               variant="contained"
-              color="secondary"
+              color="primary"
               startIcon={<AddIcon />}
               onClick={() => history.push('/dzieci/nowe-dziecko')}
             >Dodaj

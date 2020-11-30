@@ -83,6 +83,8 @@ export const OrderPage = () => {
         onError: err => {
           setError(errorHandler(err, message => {
             switch (message) {
+              case 'You can not delete this meal':
+                return 'Nie możesz już anulować tego posiłku';
               default:
                 return 'Wystąpił nieznany błąd, spróbuj ponownie.';
             }

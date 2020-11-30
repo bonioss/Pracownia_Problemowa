@@ -22,9 +22,9 @@ export const ParentDrawer: FC<Props> = ({ user }) => (
     <Divider />
 
     <List component="nav">
-      <DrawerItem name="Jadłospis" icon={MenuIcon} to="/jadlospis" />
-      <DrawerItem name="Zamówienia" icon={OrdersIcon} to="/zamowienia" />
-      <DrawerItem name="Moje dzieci" icon={TestIcon} to="/parent-dzieci" />
+      <DrawerItem name="Jadłospis" icon={MenuIcon} to="/jadlospis" exact={false} />
+      <DrawerItem name="Zamówienia" icon={OrdersIcon} to="/zamowienia" exact={false} />
+      <DrawerItem name="Moje dzieci" icon={TestIcon} to="/parent-dzieci" exact={false} />
     </List>
   </>
 );

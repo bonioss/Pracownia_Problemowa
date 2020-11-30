@@ -48,6 +48,10 @@ interface OrderPageParams {
   id: string;
 }
 
+/**
+ * Komponent podstrony zamówienia
+ * @component
+ */
 export const OrderPage = () => {
   const { id } = useParams<OrderPageParams>();
   const [mealsPage, setMealsPage] = useState(1);

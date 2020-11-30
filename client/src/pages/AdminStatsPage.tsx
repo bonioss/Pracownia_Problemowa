@@ -46,6 +46,10 @@ const columns: ColDef[] = [
   })),
 ];
 
+/**
+ * Komponent podstrony statystyk
+ * @component
+ */
 export const AdminStatsPage = () => {
   const [selectedDate, selectDate] = useState(startOfDay(new Date()));
   const stats = useOrdersStats(selectedDate);

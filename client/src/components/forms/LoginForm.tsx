@@ -29,6 +29,9 @@ const StyledTextField = withStyles({
 })(TextField);
 // #endregion
 
+/**
+ * Schemat walidacji formularza logowania
+ */
 export const schema = z.object({
   email: z.string()
     .min(1, { message: 'Email jest wymagany' })
@@ -37,15 +40,21 @@ export const schema = z.object({
     .min(1, { message: 'Hasło jest wymagane' }),
 });
 
-export const LoginForm: FC<FormProps<LoginParams> & Stylable> = ({
-  onSubmit, error, form, ...props
-}) => {
+/**
+ * Formularz logowania
+ * @param props Właściwości formularza
+ * @component
+ */
+export const LoginForm: FC<FormProps<LoginParams> & Stylable> = props => {
+  const {
+    onSubmit, error, form, ...rest
+  } = props;
   const {
     handleSubmit, register, errors, formState,
   } = form;
 
   return (
-    <Form {...props} onSubmit={handleSubmit(onSubmit)}>
+    <Form {...rest} onSubmit={handleSubmit(onSubmit)}>
       <Collapse in={!!error}>
         {error && <Alert severity="error">{error}</Alert>}
       </Collapse>

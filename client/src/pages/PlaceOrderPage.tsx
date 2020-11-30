@@ -73,6 +73,10 @@ enum OrderStep {
 
 const daysNames = ['Poniedziałek', 'Wtorek', 'Środa', 'Czwartek', 'Piątek', 'Sobota', 'Niedziela'];
 
+/**
+ * Komponent podstrony składania zamówienia
+ * @component
+ */
 export const PlaceOrderPage = () => {
   const [selectedChild, selectChild] = useState<Kid>();
   const [step, setStep] = useState(0);

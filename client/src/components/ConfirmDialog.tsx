@@ -11,16 +11,27 @@ const StyledProgress = styled(CircularProgress)(({ theme }) => ({
 }));
 // #endregion
 
-interface Props {
+/** Właściwości okna dialogowego */
+export interface Props {
+  /** Tytuł okna dialogowego */
   title?: string;
+  /** Flaga czy okno jest otwarte */
   isOpen: boolean;
+  /** Funkcja zamykająca okno */
   setClose: () => void;
+  /** Funkcja uruchamiana po potwierdzeniu */
   onConfirm: () => Promise<unknown> | void;
 }
 
-export const ConfirmDialog: FC<Props> = ({
-  title, children, isOpen, setClose, onConfirm,
-}) => {
+/**
+ * Komponent okna dialogowego potwierdzania operacji
+ * @param props Właściwości komponentu
+ * @component
+ */
+export const ConfirmDialog: FC<Props> = props => {
+  const {
+    title, children, isOpen, setClose, onConfirm,
+  } = props;
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [isLoading, setLoading] = useState(false);

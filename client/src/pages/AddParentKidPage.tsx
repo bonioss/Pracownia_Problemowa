@@ -11,6 +11,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 // #region styles
 // #endregion
 
+/**
+ * Komponent podstrony przypisywania dziecka
+ * @component
+ */
 export const AddParentKidPage = () => {
   const form = useForm<Parent>({
     defaultValues: {

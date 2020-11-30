@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 
+/** Funkcja tworząca globalny stan */
 export const createState = <S extends object>(initialState: S, persistenceKey?: string) => {
   const stateContext = React.createContext<S | undefined>(undefined);
   const setStateContext = React.createContext<React.Dispatch<Partial<S>> | undefined>(undefined);

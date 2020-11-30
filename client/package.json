@@ -38,7 +38,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "docs": "typedoc",
-    "postdocs": "concat-md --decrease-title-levels --dir-name-as-title docs > DOCS.md",
+    "postdocs": "concat-md --decrease-title-levels --dir-name-as-title docs > DOCS.md && md-to-pdf DOCS.md",
     "pdf": "md-to-pdf DOCS.md"
   },
   "eslintConfig": {

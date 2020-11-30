@@ -9,12 +9,21 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { OrderMeal } from 'api/orders';
 import { useAuth } from 'utils/authState';
 
-interface Props {
+/** Właściwości komponentu elementu listy posiłków */
+export interface Props {
+  /** Obiekt posiłku */
   data: OrderMeal;
+  /** Funkcja uruchamiana przy usuwaniu */
   onRemove?: (mealId: string) => void;
 }
 
-export const MealListItem: FC<Props> = ({ data, onRemove }) => {
+/**
+ * Komponent elementu listy posiłków
+ * @param props Właściwości komponentu
+ * @component
+ */
+export const MealListItem: FC<Props> = props => {
+  const { data, onRemove } = props;
   const { Icon, label } = useMemo(() => mealLabelAndIcon(data.type), [data.type]);
   const { user } = useAuth();
 

@@ -35,6 +35,7 @@
       "src/index.tsx",
       "src/theme.ts",
     ],
-    "categorizeByGroup": true
+    "categorizeByGroup": true,
+    "excludeNotExported": true
   }
 }

@@ -34,6 +34,10 @@ export const AddParentKidPage = () => {
       onError: err => {
         setFormError(errorHandler(err, message => {
           switch (message) {
+            case 'Invalid kid code':
+              return 'Nieprawidłowy kod dziecka';
+            case 'This kid is already added':
+              return 'To dziecko zostało już przypisane';
             default:
               return 'Wystąpił nieznany błąd, spróbuj ponownie.';
           }

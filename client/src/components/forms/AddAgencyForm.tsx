@@ -4,7 +4,7 @@ import {
 import Alert from '@material-ui/lab/Alert';
 import { DatePicker } from '@material-ui/pickers';
 import { NewAgency, ORDERS_PERIODS } from 'api/auth';
-import { isAfter } from 'date-fns';
+import { addDays, isAfter } from 'date-fns';
 import React, { FC } from 'react';
 import { Controller } from 'react-hook-form';
 import { periodLabel } from 'utils/mappers';
@@ -129,6 +129,7 @@ export const AddAgencyForm: FC<FormProps<NewAgency> & Stylable> = props => {
           <DatePicker
             label="Koniec semestru letniego"
             allowKeyboardControl={false}
+            minDate={addDays(new Date(), 1)}
             renderInput={prop => (
               <TextField
                 {...prop}
@@ -147,6 +148,7 @@ export const AddAgencyForm: FC<FormProps<NewAgency> & Stylable> = props => {
       <Controller
         control={control}
         name="winterTermEnd"
+        minDate={addDays(new Date(), 1)}
         render={p => (
           <DatePicker
             label="Koniec semestru zimowego"

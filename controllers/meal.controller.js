@@ -1,15 +1,15 @@
 const ErrorResponse = require('../utils/ErrorResponse');
 const asyncHandler = require('../middleware/asyncHandler');
 const Meal = require('../models/Meal.model');
-
+const {getType} = require('./order.controller');
 
 // @desc    Add meal
 // @route   POST /api/v1/meal/addMeal
 // @access  Private
 
 exports.addMeal = asyncHandler(async (req, res, next) => {
-    const {type, description, date, price} = req.body;
-
+    const {type, description, date} = req.body;
+    const price = getType(type);
     //create meal
     const meal = await Meal.create({
         type,

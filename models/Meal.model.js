@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const MealSchema = new mongoose.Schema({
     type: {
         type: String,
-        enum: ['breakfast', 'lunch', 'soup', 'main dish', 'dinner', 'teatime'],
+        enum: ['breakfast', 'lunch', 'soup', 'main dish', 'dinner', 'tea time'],
         required: [true, 'Type of meal is required.']
     },
     description: {

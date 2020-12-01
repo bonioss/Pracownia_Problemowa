@@ -1146,15 +1146,13 @@ components:
           - 'soup'  
           - 'main dish' 
           - 'dinner'
-          - 'teatime'         
+          - 'tea time'         
         description:
           type: string
         date:
           type: string
           format: date
-          example: "2021-01-30"
-        price:
-          type: number 
+          example: "2021-01-30" 
     Login:
       type: object
       properties:

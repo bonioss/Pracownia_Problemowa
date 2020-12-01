@@ -6,7 +6,7 @@ const Kid = require('../models/Kid.model');
 const Agency = require('../models/Agency.model');
 const Holidays = require("date-holidays");
 
-const getType = (type) => {
+exports.getType = (type) => {
     let price=0;
     if(type==='breakfast') price = 10;
     else if(type==='lunch') price = 12;

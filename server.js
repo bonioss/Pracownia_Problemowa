@@ -7,6 +7,8 @@ const errorHandler = require('./middleware/errorHandler');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const path = require('path');
+const mongoose = require('mongoose');
+
 //for documentation
 const swaggerUi = require('swagger-ui-express'),
 YAML = require('yamljs');
@@ -17,7 +19,7 @@ dotenv.config({ path: './config/config.env' });
 
 // Connect to database
 connectDB();
-
+mongoose.set('debug', true);
 // Route files
 const authRoutes = require('./routes/auth.routes');
 const testRoutes = require('./routes/test.routes');

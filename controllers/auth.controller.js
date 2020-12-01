@@ -6,7 +6,7 @@ const getSignedJwtToken = require('../middleware/getToken');
 const generator = require('generate-password');
 const shortid = require('shortid');
 const nodemailer = require("nodemailer");
-
+const sgMail = require('@sendgrid/mail');
 // @desc    Login user
 // @route   POST /api/v1/auth/login
 // @access  Public
@@ -67,8 +67,7 @@ exports.login = asyncHandler(async (req, res, next) => {
 // @access  Private, admin
 exports.addAgency = asyncHandler(async (req, res, next)=>{
 try {
-  const {email, name, ordersPeriod, winterTermEnd, summerTermEnd} = req.body;
-
+const {email, name, ordersPeriod, winterTermEnd, summerTermEnd} = req.body;
 let checkCrudentials={};
 checkCrudentials.user = await User.findOne({email});
 checkCrudentials.agency = await Agency.findOne({email});
@@ -103,16 +102,18 @@ const agency = await Agency.create({
 })
 
 //create mail transporter
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
-  auth: {
-      user: process.env.CATERING_MAIL,
-      pass: process.env.CATERING_MAIL_PASSWORD
-  },
-  sendMail: true
-});
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+// const transporter = nodemailer.createTransport({
+//   host: 'smtp.gmail.com',
+//   port: 465,
+//   secure: true,
+//   auth: {
+//       user: process.env.CATERING_MAIL,
+//       pass: process.env.CATERING_MAIL_PASSWORD
+//   },
+//   sendMail: true
+// });
 
 const msg = {
   from: `"Food Catering" <${process.env.CATERING_MAIL}>`, // sender address
@@ -122,7 +123,15 @@ const msg = {
 }
 
 //send mail
-const info = await transporter.sendMail(msg);
+// const info = await transporter.sendMail(msg);
+sgMail
+  .send(msg)
+  .then(() => {
+    console.log('Email sent')
+  })
+  .catch((error) => {
+    console.error(error)
+  })
 
 const resData = await Agency.findById(agency._id).select('-_id -password -__v');
 res.status(200).json({

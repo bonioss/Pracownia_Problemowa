@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { errorHandler } from 'utils/errorHandler';
 import { useHistory } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { addDays } from 'date-fns';
 
 // #region styles
 // #endregion
@@ -21,8 +22,8 @@ export const AddAgencyPage = () => {
       name: '',
       email: '',
       ordersPeriod: 'week',
-      summerTermEnd: new Date(),
-      winterTermEnd: new Date(),
+      summerTermEnd: addDays(new Date(), 1),
+      winterTermEnd: addDays(new Date(), 1),
     },
     resolver: zodResolver(schema),
   });
@@ -40,6 +41,8 @@ export const AddAgencyPage = () => {
           switch (message) {
             case 'E-mail already exists':
               return 'Ten adres email jest już używany przez inną placówkę';
+            case 'Please provide date later than today':
+              return 'Podaj datę późniejszą niż dzisiaj';
             default:
               return 'Wystąpił nieznany błąd, spróbuj ponownie.';
           }

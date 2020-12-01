@@ -183,6 +183,14 @@ export const PlaceOrderPage = () => {
         onError: err => {
           setError(errorHandler(err, message => {
             switch (message) {
+              case 'Please provide date later than today':
+                return 'Podaj datę późniejszą niż dzisiaj';
+              case 'Your previous order has not finished':
+                return 'Poprzednie zamówienie jeszcze się nie skończyło';
+              case 'Choosen data is a public holiday':
+                return 'Wybrany dzień jest świętem';
+              case 'Please provide some meal':
+                return 'Musisz wybrać co najmniej jeden posiłek';
               default:
                 return 'Wystąpił nieznany błąd, spróbuj ponownie.';
             }

@@ -21,7 +21,7 @@ export const AgencyDrawer: FC<Props> = props => {
   const { user } = props;
   return (
     <>
-      <DrawerHeader name={user.name} />
+      <DrawerHeader name={user.name} text={`Kod: ${user.agencyCode}`} />
 
       <Divider />
 

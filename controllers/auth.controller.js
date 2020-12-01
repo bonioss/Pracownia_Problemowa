@@ -5,8 +5,8 @@ const Agency = require('../models/Agency.model');
 const getSignedJwtToken = require('../middleware/getToken');
 const generator = require('generate-password');
 const shortid = require('shortid');
-const nodemailer = require("nodemailer");
 const sgMail = require('@sendgrid/mail');
+
 // @desc    Login user
 // @route   POST /api/v1/auth/login
 // @access  Public
@@ -104,17 +104,6 @@ const agency = await Agency.create({
 //create mail transporter
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-// const transporter = nodemailer.createTransport({
-//   host: 'smtp.gmail.com',
-//   port: 465,
-//   secure: true,
-//   auth: {
-//       user: process.env.CATERING_MAIL,
-//       pass: process.env.CATERING_MAIL_PASSWORD
-//   },
-//   sendMail: true
-// });
-
 const msg = {
   from: `"Food Catering" <${process.env.CATERING_MAIL}>`, // sender address
   to: `${email}`, // list of receivers
@@ -123,7 +112,6 @@ const msg = {
 }
 
 //send mail
-// const info = await transporter.sendMail(msg);
 sgMail
   .send(msg)
   .then(() => {

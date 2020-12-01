@@ -1,7 +1,7 @@
 const ErrorResponse = require('../utils/ErrorResponse');
 const asyncHandler = require('../middleware/asyncHandler');
 const Meal = require('../models/Meal.model');
-const {getType} = require('./order.controller');
+const { getType } = require('../middleware/order');
 
 // @desc    Add meal
 // @route   POST /api/v1/meal/addMeal

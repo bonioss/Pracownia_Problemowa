@@ -124,29 +124,6 @@ export const AddAgencyForm: FC<FormProps<NewAgency> & Stylable> = props => {
 
       <Controller
         control={control}
-        name="summerTermEnd"
-        render={p => (
-          <DatePicker
-            label="Koniec semestru letniego"
-            allowKeyboardControl={false}
-            minDate={addDays(new Date(), 1)}
-            renderInput={prop => (
-              <TextField
-                {...prop}
-                variant="outlined"
-                helperText={errors.summerTermEnd?.message || ''}
-                error={!!errors.summerTermEnd}
-                margin="normal"
-                required
-              />
-            )}
-            {...p}
-          />
-        )}
-      />
-
-      <Controller
-        control={control}
         name="winterTermEnd"
         minDate={addDays(new Date(), 1)}
         render={p => (
@@ -159,6 +136,29 @@ export const AddAgencyForm: FC<FormProps<NewAgency> & Stylable> = props => {
                 variant="outlined"
                 helperText={errors.winterTermEnd?.message || ''}
                 error={!!errors.winterTermEnd}
+                margin="normal"
+                required
+              />
+            )}
+            {...p}
+          />
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="summerTermEnd"
+        render={p => (
+          <DatePicker
+            label="Koniec semestru letniego"
+            allowKeyboardControl={false}
+            minDate={addDays(new Date(), 1)}
+            renderInput={prop => (
+              <TextField
+                {...prop}
+                variant="outlined"
+                helperText={errors.summerTermEnd?.message || ''}
+                error={!!errors.summerTermEnd}
                 margin="normal"
                 required
               />

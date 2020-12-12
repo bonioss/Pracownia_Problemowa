@@ -1,7 +1,7 @@
 import {
   ListItem, ListItemAvatar, Avatar, ListItemText,
 } from '@material-ui/core';
-import { Order, OrderWithKid } from 'api/orders';
+import { Order } from 'api/orders';
 import React, { FC } from 'react';
 import { format } from 'utils/dateFns';
 import OrdersIcon from '@material-ui/icons/ListAlt';
@@ -9,7 +9,7 @@ import OrdersIcon from '@material-ui/icons/ListAlt';
 /** Właściwości komponentu elementu listy zamówień */
 export interface Props {
   /** Obiekt zamówienia */
-  data: Order & OrderWithKid;
+  data: Order;
   /** Funkcja uruchamiana po kliknięciu */
   onClick?: () => void;
 }

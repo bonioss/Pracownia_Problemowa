@@ -46,6 +46,8 @@ export interface Order {
   startDate: string;
   /** Data końcowa okresu */
   endDate: string;
+  /** Dziecko */
+  kid?: Pick<Kid, 'firstName' | 'lastName' | 'kidCode'>;
 }
 
 export type OrderWithMeals = {
@@ -91,10 +93,6 @@ export interface OrderSummary {
   wallet: number;
 }
 
-export type OrderWithKid = {
-  kid: Pick<Kid, 'firstName' | 'lastName' | 'kidCode'>;
-} & Order;
-
 export type OrderMeal = Omit<Meal, 'description'>;
 // #endregion
 
@@ -124,7 +122,7 @@ export const useGetOrderPrice = () => useMutation(
  */
 export const useGetAgencyOrders = (param: OrdersFetchParams) => (
   usePaginatedQuery(['orders', param], ({ agencyCode, ...params }: OrdersFetchParams) => (
-    api.get<PaginatedApiResponse<OrderWithKid>>(`/orders/agencyOrders/${agencyCode}`, { params }).then(res => res.data.data)
+    api.get<PaginatedApiResponse<Order>>(`/orders/agencyOrders/${agencyCode}`, { params }).then(res => res.data.data)
   ))
 );
 

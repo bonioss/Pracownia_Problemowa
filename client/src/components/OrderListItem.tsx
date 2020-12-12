@@ -1,7 +1,7 @@
 import {
   ListItem, ListItemAvatar, Avatar, ListItemText,
 } from '@material-ui/core';
-import { Order } from 'api/orders';
+import { Order, OrderWithKid } from 'api/orders';
 import React, { FC } from 'react';
 import { format } from 'utils/dateFns';
 import OrdersIcon from '@material-ui/icons/ListAlt';
@@ -9,7 +9,7 @@ import OrdersIcon from '@material-ui/icons/ListAlt';
 /** Właściwości komponentu elementu listy zamówień */
 export interface Props {
   /** Obiekt zamówienia */
-  data: Order;
+  data: Order & OrderWithKid;
   /** Funkcja uruchamiana po kliknięciu */
   onClick?: () => void;
 }
@@ -29,10 +29,17 @@ export const OrderListItem: FC<Props> = props => {
         </Avatar>
       </ListItemAvatar>
 
-      <ListItemText
-        primary={`Zamówienie z dnia ${format(new Date(data.startDate), 'dd.MM.yyyy')}`}
-        secondary={data.paid ? 'Opłacone' : `Do zapłacenia: ${data.price}zł`}
-      />
+      {data.kid !== undefined ? (
+        <ListItemText
+          primary={`Zamówienie dla ${data.kid.firstName} ${data.kid.lastName} z dnia ${format(new Date(data.startDate), 'dd.MM.yyyy')}`}
+          secondary={data.paid ? 'Opłacone' : `Do zapłacenia: ${data.price}zł`}
+        />
+      ) : (
+        <ListItemText
+          primary={`Zamówienie z dnia ${format(new Date(data.startDate), 'dd.MM.yyyy')}`}
+          secondary={data.paid ? 'Opłacone' : `Do zapłacenia: ${data.price}zł`}
+        />
+      )}
     </ListItem>
   );
 };

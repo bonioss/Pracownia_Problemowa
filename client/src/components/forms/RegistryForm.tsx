@@ -41,7 +41,8 @@ export const schema = z.object({
   lastName: z.string()
     .min(3, { message: 'Nazwisko jest wymagane' }),
   password: z.string()
-    .min(4, { message: 'Hasło jest wymagane' }),
+    .min(1, { message: 'Hasło jest wymagane' })
+    .min(8, { message: 'Hasło musi mieć co najmniej 8 znaków' }),
   passwordConfirm: z.string()
     .min(4, { message: 'Hasło jest wymagane' }),
   agencyCode: z.string()

@@ -16,6 +16,7 @@ import {
 import { format } from 'utils/dateFns';
 import { MealListItem } from 'components/MealListItem';
 import PaidIcon from '@material-ui/icons/AttachMoney';
+import { useAuth } from 'utils/authState';
 
 // #region styles
 const MealsList = styled(GenericList)({
@@ -61,6 +62,7 @@ export const OrderPage = () => {
   const [removeMeal] = useRemoveMeal();
   const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [mealToRemove, setMealToRemove] = useState<OrderMeal>();
+  const { user } = useAuth();
 
   const handlePaidClick = async () => {
     if (order.resolvedData) {
@@ -106,7 +108,7 @@ export const OrderPage = () => {
 
         <div style={{ flex: 1 }} />
 
-        {order.resolvedData && (
+        {order.resolvedData && user?.role === 'agency' && (
           <Button
             variant="contained"
             color="primary"

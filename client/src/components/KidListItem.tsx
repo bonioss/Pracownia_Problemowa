@@ -6,6 +6,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import { Kid } from 'api/kid';
 import React, { FC, useState } from 'react';
 import { ConfirmDialog } from 'components/ConfirmDialog';
+import { useAuth } from 'utils/authState';
 
 /** Właściwości komponentu elementu listy dzieci */
 export interface Props {
@@ -23,6 +24,7 @@ export interface Props {
 export const KidListItem: FC<Props> = props => {
   const { data, handleDelete } = props;
   const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const { user } = useAuth();
 
   return (
     <ListItem>
@@ -31,7 +33,10 @@ export const KidListItem: FC<Props> = props => {
           <TestIcon />
         </Avatar>
       </ListItemAvatar>
-      <ListItemText primary={`${data.lastName} ${data.firstName}`} />
+      <ListItemText
+        primary={`${data.lastName} ${data.firstName}`}
+        secondary={user?.role === 'agency' ? `Kod: ${data.kidCode}` : undefined}
+      />
       <Button
         variant="contained"
         color="primary"

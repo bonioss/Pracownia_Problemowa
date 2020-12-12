@@ -268,7 +268,7 @@ exports.getOrdersByAgencyCode = asyncHandler(async(req, res, next) => {
     try {
       results.results = await Order.find({
           agencyCode: req.params.agencyCode
-        })
+        }).populate({path: 'kid', select: 'firstName lastName -_id'})
         .limit(limit)
         .skip(startIndex)
         .select('-meals -__v')
